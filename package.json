@@ -1,0 +1,12 @@
+{
+  "name": "stone-runtime-verification",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "test": "node --test tests/*.test.mjs && npm --prefix experiments/rover3d run test:contract",
+    "verify:engine": "npm --prefix experiments/rover3d run verify"
+  }
+}

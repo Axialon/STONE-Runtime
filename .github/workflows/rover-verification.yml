@@ -1,0 +1,64 @@
+name: Rover verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'experiments/rover3d/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/rover-verification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: rover-verification-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    if: github.repository == 'Axialon/STONE-Runtime' && github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      npm_config_ignore_scripts: 'true'
+      npm_config_audit: 'false'
+      npm_config_fund: 'false'
+      npm_config_registry: 'https://registry.npmjs.org/'
+    steps:
+      - name: Checkout public snapshot only
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Set up Node without dependency caching
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22.16.0'
+          package-manager-cache: false
+      - name: Verify source and acquisition checks without engine
+        run: npm test
+      - name: Resolve exact engine into a lockfile without executing it
+        working-directory: experiments/rover3d
+        run: |
+          if [ ! -f package-lock.json ]; then
+            npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          fi
+      - name: Validate dependency graph and record archive integrity
+        run: |
+          node scripts/verify-lock.mjs
+          echo '--- BEGIN PUBLIC PACKAGE LOCK ---'
+          cat experiments/rover3d/package-lock.json
+          echo '--- END PUBLIC PACKAGE LOCK ---'
+      - name: Acquire integrity-checked engine with lifecycle scripts disabled
+        working-directory: experiments/rover3d
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Run actual engine preflight and physics acceptance tests
+        run: npm run verify:engine
+      - name: Record scope of result
+        if: always()
+        env:
+          RESULT: ${{ job.status }}
+        run: |
+          printf '## Rover verification\n\nJob status: %s\n\n' "$RESULT" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Source revision: `%s`\n\n' "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Headless experiment only. No browser, deployment, trained policy, or physical-machine certification.\n' >> "$GITHUB_STEP_SUMMARY"
