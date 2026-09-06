@@ -3,30 +3,36 @@ Public Stone Repo
 
 **Interchangeable expertise for machines and digital systems.**
 
-This repository starts with a deliberately small public verification snapshot: the experimental three-dimensional rover contract, Rapier adapter, and tests. It is not a mirror of the project's development archive. The browser Arena and other platform components are not included in this first snapshot.
+## Rover proving ground
+A local, working 3D STONE reference experience. Select FLOW, DART or ANCHOR Rover, run either fixed course, change the controller without replacing the machine, stop, inspect recorded frames and verify an engine replay. Compare measured trade-offs under identical hardware limits. Export the recording, comparison and capability passport as JSON.
 
-## Status
-Actual headless Rapier 0.20.0 execution is verified on Linux x64 / Node 22.20.0. All ten original physics acceptance tests pass after correcting package metadata lookup for the published dist/ layout. The real dependency lock is committed. See evidence/ROVER3D_HEADLESS_V0_1.md for measurements, test-first regression evidence and limitations.
+The rover uses the actual Rapier 0.20.0 physics engine. Three.js r184 renders its body pose, suspension, steering and wheel rotation. The Plan view and numerical values remain available when graphics fail. Controls: Space run/pause, 1–3 select a Stone, Escape stop. Camera orbit/zoom and the Rover follow view never control the vehicle.
 
-This is still a prototype, not a calibrated vehicle, trained Stone, browser integration or physical-machine safety certification. The existing browser Arena is outside this public snapshot. Hosted Actions is not the verified execution route; automatic triggers are disabled to avoid retrying unavailable infrastructure.
+These three first-party Stones are **rule-based prototypes**, not trained models, universal obstacle-avoidance systems or hardware-calibrated controllers. The two fixed lanes are a reference task, not proof of broad robot competence. No cloud service, API key, public hosting or second AI agent is involved in the running application.
 
-## Local verification
+## Start locally
 Use Node.js 22 or later. From the repository root:
 
 ```sh
-npm test
-node scripts/verify-lock.mjs
-cd experiments/rover3d
-npm ci --ignore-scripts --no-audit --no-fund
-npm run verify
+npm --prefix experiments/rover3d ci --ignore-scripts --no-audit --no-fund
+npm --prefix apps/rover ci --ignore-scripts --no-audit --no-fund
+npm run rover
 ```
 
-The dependency-free checks run without Rapier. The engine stage requires the exact official `@dimforge/rapier3d-compat@0.20.0` package. Missing or mismatched engines fail; no replacement physics or skipped-pass result is used. The committed package-lock.json pins the acquired archive integrity; subsequent installations use `npm ci`. Do not silently regenerate the lock during a test run.
+Open the loopback address printed by the server, normally `http://127.0.0.1:4173/`. Stop with Ctrl+C. The runtime requests only its own local assets; internet is needed for the initial dependency acquisition, not the experience. Use the committed locks. No install lifecycle scripts are needed.
 
-## Public verification boundary
-The workflow uses a single standard Linux runner, read-only repository access and a ten-minute timeout. It has no schedules, cache, artifact uploads, deployment, private-source checkout or additional credentials. It is manual-only; no push or schedule starts it. Do not dispatch it while hosted execution is unavailable. Current evidence comes from explicit local execution, not an Actions pass. There is no publicly hosted application.
+## Verify and compare
+```sh
+npm run verify:all
+npm run verify:browser
+npm run compare
+```
 
-`snapshot.json` identifies the included original source by content hashes. Public testing changes are reviewed independently; matching source changes are reconciled with the development project before integration. Synthetic loader fixtures test diagnostics only, never vehicle physics.
+The browser suite uses an existing sandbox-capable Google Chrome installation. Set `CHROME_PATH` for the main browser suite when necessary; the fault suite currently targets `/usr/bin/google-chrome`. No browser security policy or sandbox is disabled by these tests. Evidence names the tested environment and limits.
 
-## Licence status
-STONE's original code retains its existing `UNLICENSED` status; publishing this snapshot does not select a new open-source licence. The external Rapier dependency identifies its licence as Apache-2.0 and retains its own upstream notices when installed. No dependency source or font files are bundled here.
+See `evidence/ROVER_WORKBENCH_V0_1.md` for current results and `evidence/rover-comparison.json` for the measured reference runs. Missing dependencies fail verification; no substitute physics or skipped-pass result is used. Headless and browser comparison outputs agree exactly on the tested Linux/Node/Chrome environment. This is not a cross-platform determinism guarantee.
+
+## Boundaries
+This public repository contains reviewed runtime source and evidence, not internal coordination documents or private Git history. `snapshot.json` records selected source hashes. The planar Arena is a separate unchanged reference application. Hosted verification is manual-only and must not be retried while unavailable. No schedules, paid runners, deployment credentials, automatic publication or public application deployment are enabled.
+
+Original STONE code remains `UNLICENSED` pending an explicit licence decision. Upstream libraries keep their own terms; see `THIRD_PARTY.md`. No font files, copied demo art or external models are bundled.

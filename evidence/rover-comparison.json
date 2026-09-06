@@ -1,0 +1,94 @@
+{
+  "engine": {
+    "package": "@dimforge/rapier3d-compat",
+    "version": "0.20.0"
+  },
+  "machineVersion": "stone.rover.machine/0.1.0",
+  "note": "Rule-based prototypes; simulated metrics, not hardware energy or calibration.",
+  "results": [
+    {
+      "courseId": "flat-lane",
+      "id": "rover.flow",
+      "name": "FLOW / Rover",
+      "version": "0.1.0",
+      "machineVersion": "stone.rover.machine/0.1.0",
+      "seconds": 8.3,
+      "status": "succeeded",
+      "pathMetres": 15.772813085218356,
+      "throttleImpulseNs": 88.0022751138853,
+      "peakSpeed": 2.2008472902935305,
+      "peakHeight": 0.800000011920929,
+      "chassisContacts": 0
+    },
+    {
+      "courseId": "flat-lane",
+      "id": "rover.dart",
+      "name": "DART / Rover",
+      "version": "0.1.0",
+      "machineVersion": "stone.rover.machine/0.1.0",
+      "seconds": 5.6,
+      "status": "succeeded",
+      "pathMetres": 15.771900002132973,
+      "throttleImpulseNs": 143.99945703322763,
+      "peakSpeed": 3.6005152732522,
+      "peakHeight": 0.800000011920929,
+      "chassisContacts": 0
+    },
+    {
+      "courseId": "flat-lane",
+      "id": "rover.anchor",
+      "name": "ANCHOR / Rover",
+      "version": "0.1.0",
+      "machineVersion": "stone.rover.machine/0.1.0",
+      "seconds": 12.8,
+      "status": "succeeded",
+      "pathMetres": 15.77080962360511,
+      "throttleImpulseNs": 52.003682389765814,
+      "peakSpeed": 2.1254992485046387,
+      "peakHeight": 0.800000011920929,
+      "chassisContacts": 0
+    },
+    {
+      "courseId": "ramp-lane",
+      "id": "rover.flow",
+      "name": "FLOW / Rover",
+      "version": "0.1.0",
+      "machineVersion": "stone.rover.machine/0.1.0",
+      "seconds": 8.85,
+      "status": "succeeded",
+      "pathMetres": 15.875543203104716,
+      "throttleImpulseNs": 194.0523171765807,
+      "peakSpeed": 2.5378699559995157,
+      "peakHeight": 1.1985645294189453,
+      "chassisContacts": 0
+    },
+    {
+      "courseId": "ramp-lane",
+      "id": "rover.dart",
+      "name": "DART / Rover",
+      "version": "0.1.0",
+      "machineVersion": "stone.rover.machine/0.1.0",
+      "seconds": 5.816666666666666,
+      "status": "succeeded",
+      "pathMetres": 15.87200165186628,
+      "throttleImpulseNs": 211.45664601630074,
+      "peakSpeed": 3.8208215959437544,
+      "peakHeight": 1.2040188312530518,
+      "chassisContacts": 0
+    },
+    {
+      "courseId": "ramp-lane",
+      "id": "rover.anchor",
+      "name": "ANCHOR / Rover",
+      "version": "0.1.0",
+      "machineVersion": "stone.rover.machine/0.1.0",
+      "seconds": 14.866666666666667,
+      "status": "succeeded",
+      "pathMetres": 15.885657935559715,
+      "throttleImpulseNs": 225.13648429905544,
+      "peakSpeed": 2.1254992485046387,
+      "peakHeight": 1.196068286895752,
+      "chassisContacts": 0
+    }
+  ]
+}
