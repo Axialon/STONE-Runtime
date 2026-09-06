@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,copyFileSync,mkdirSync,writeFileSync,rmSync,existsSync} from 'node:fs';
 import {tmpdir} from 'node:os';
-import {join} from 'node:path';
+import {join,dirname} from 'node:path';
 import {spawnSync} from 'node:child_process';
 
 // Loader-failure fixtures, not simulated physics and not substitutes for engine tests.
@@ -15,7 +15,8 @@ function probe(metadata, source='throw new Error("PRIVATE_SENTINEL");', bounded=
     if(metadata){
       const dir=join(root,'node_modules/@dimforge/rapier3d-compat');mkdirSync(dir,{recursive:true});
       writeFileSync(join(dir,'package.json'),JSON.stringify({main:'index.mjs',type:'module',...metadata}));
-      writeFileSync(join(dir,'index.mjs'),source);
+      const entry=join(dir,metadata.main??'index.mjs');
+      mkdirSync(dirname(entry),{recursive:true});writeFileSync(entry,source);
     }
     const args = [join(root,'preflight.mjs'), ...(overrideArgs ?? (bounded ? ['--timeout-ms=300'] : []))];
     return spawnSync(process.execPath,args,{cwd:root,encoding:'utf8',timeout:1500,env:{...process.env,NODE_PATH:''}});
@@ -72,4 +73,12 @@ test('normal verification gates actual engine tests behind supervised preflight'
   const {readFile}=await import('node:fs/promises');
   const pkg=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
   assert.equal(pkg.scripts.verify,'npm run test:contract && npm run preflight && npm run test:engine');
+});
+
+// Reproduces the published 0.20.0 package layout, not its physics implementation.
+test('preflight resolves package metadata above a dist entry point',()=>{
+  const source='export default {async init(){},World:class{step(){}free(){}},ColliderDesc:{cuboid(){}}};';
+  const r=probe({...identity,main:'dist/index.mjs',exports:{'.':{import:'./dist/index.mjs',require:'./dist/index.mjs'}}},source);
+  assert.equal(r.status,0,r.stderr);
+  assert.equal(JSON.parse(r.stdout).status,'engine-initialised');
 });
