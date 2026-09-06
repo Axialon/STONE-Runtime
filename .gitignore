@@ -6,3 +6,5 @@ node_modules/
 
 evidence/browser-local/
 *.log
+
+evidence/lab-proof/

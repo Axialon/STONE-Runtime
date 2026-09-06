@@ -1,0 +1,9 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {spawnSync} from 'node:child_process';
+const call=args=>spawnSync(process.execPath,['scripts/lab.mjs',...args],{encoding:'utf8',timeout:8000,maxBuffer:2000000,env:{...process.env,STONE_CLOUD_CONFIG:''}});
+test('catalogue lists planned and available packages without a model call',()=>{const r=call(['list']);assert.equal(r.status,0,r.stderr);const d=JSON.parse(r.stdout);assert.ok(d.packages.length>=13);assert.equal(d.packages.find(p=>p.host==='drone').availability,'planned');});
+test('CLI produces actual humanoid benchmark results',()=>{const r=call(['benchmark','humanoid','reach']);assert.equal(r.status,0,r.stderr);const d=JSON.parse(r.stdout);assert.equal(d.results.length,3);assert.ok(d.results.every(r=>r.status==='succeeded'));});
+test('local digital brief is executable and explicitly model-free',()=>{const r=call(['digital','digital.brief','humanoid','reach']);assert.equal(r.status,0,r.stderr);const d=JSON.parse(r.stdout);assert.equal(d.actualExecution,'local');assert.equal(d.model,null);assert.ok(d.text.includes('3/3'));});
+test('cloud status is unconfigured and no inference is implied',()=>{const r=call(['cloud-status']);assert.equal(r.status,0,r.stderr);assert.equal(JSON.parse(r.stdout).configured,false);});
+test('cloud package cannot execute without configured approval',()=>assert.equal(call(['digital','digital.analyst','humanoid','reach','--consent']).status,2));
+test('explicit hybrid local-only mode produces a labelled result',()=>{const r=call(['digital','digital.hybrid','humanoid','reach','--local-fallback']);assert.equal(r.status,0,r.stderr);assert.equal(JSON.parse(r.stdout).actualExecution,'local-only');});
+for(const args of [['benchmark','drone','anything'],['eval','anything'],['benchmark','humanoid','reach','--unknown']])test('CLI rejects '+args.join(' '),()=>assert.equal(call(args).status,2));
