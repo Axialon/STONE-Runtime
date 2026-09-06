@@ -10,3 +10,6 @@ This is a curated public verification snapshot, not the internal project archive
 - Preserve unrelated work. Make scoped branches and reviewed pull requests. A public verification merge is not product-release acceptance.
 - Original code remains UNLICENSED pending an explicit licence decision. Preserve upstream notices for external dependencies.
 - Describe self-review and untested platforms honestly. Match claims to the exact workflow run and commit.
+
+## Session efficiency and component ownership
+The owner prefers substantial verified batches per conversation turn. Complete dependent increments in one active session where practical, with local test/review checkpoints; do not ask for routine approvals or imply work continues unattended. Keep reasoning and implementation in the conversation, not another coding model. This published rover component is maintained here with immutable integration references in private coordination; never automatically mirror private documents or history. Preserve the separate planar baseline.

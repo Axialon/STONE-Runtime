@@ -27,25 +27,16 @@ jobs:
         with:
           node-version: '22.16.0'
           package-manager-cache: false
-      - name: Verify source and acquisition checks without engine
-        run: npm test
-      - name: Resolve exact engine into a lockfile without executing it
-        working-directory: experiments/rover3d
-        run: |
-          if [ ! -f package-lock.json ]; then
-            npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-          fi
-      - name: Validate dependency graph and record archive integrity
+      - name: Verify pinned dependency records before installation
         run: |
           node scripts/verify-lock.mjs
-          echo '--- BEGIN PUBLIC PACKAGE LOCK ---'
-          cat experiments/rover3d/package-lock.json
-          echo '--- END PUBLIC PACKAGE LOCK ---'
-      - name: Acquire integrity-checked engine with lifecycle scripts disabled
-        working-directory: experiments/rover3d
-        run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Run actual engine preflight and physics acceptance tests
-        run: npm run verify:engine
+          node --test tests/rover-dependencies.test.mjs
+      - name: Acquire the reviewed dependencies with lifecycle scripts disabled
+        run: |
+          npm --prefix experiments/rover3d ci --ignore-scripts --no-audit --no-fund
+          npm --prefix apps/rover ci --ignore-scripts --no-audit --no-fund
+      - name: Verify actual headless engine, policies, sessions and serving
+        run: npm run verify:all
       - name: Record scope of result
         if: always()
         env:

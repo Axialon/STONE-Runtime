@@ -1,0 +1,13 @@
+{
+  "name": "stone-rover-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "three": "0.184.0"
+  },
+  "devDependencies": {
+    "playwright-core": "1.58.2"
+  }
+}

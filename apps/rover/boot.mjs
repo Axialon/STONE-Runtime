@@ -1,0 +1,1 @@
+import('./app.mjs').catch(()=>{document.body.dataset.ready='false';const e=document.querySelector('#error');e.hidden=false;e.textContent='The workbench could not start. Check that both pinned dependency sets are installed, then reload.';document.querySelector('#run-state').textContent='Startup failed';});
