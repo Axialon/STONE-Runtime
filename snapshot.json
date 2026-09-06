@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "stone.public-snapshot/0.1",
+  "snapshotId": "rover3d-candidate-001",
+  "note": "Reviewed source-only snapshot; no prior Git history or internal coordination files. This identifier does not claim engine test success.",
+  "files": {
+    "experiments/rover3d/.npmrc": "7df3715245807a5da2d5484ba206f4eb0606a566dc6c8947ee31be46e098798d",
+    "experiments/rover3d/contract.mjs": "1c1fdb91a18977cbbb8e0858951195c373bf7819077f0a834eccfc9b771b11d1",
+    "experiments/rover3d/engine-check.mjs": "ba24b15969d730f9a0b25b57f773f2f6cea2fba26259a0c9372be880c0d53700",
+    "experiments/rover3d/engine.mjs": "56039c2347a7d6fd9db3a827246db28e6429def919d77eed18d2ed4efe754025",
+    "experiments/rover3d/host.mjs": "f873f88ceada02c47f68cdefa06f22fd7872effdea604c0c4ba504df11d5115a",
+    "experiments/rover3d/package.json": "f7a454a72cad63aa557933d1d7cfc272974fa52d8c8547a317071d7efeb68992",
+    "experiments/rover3d/preflight.mjs": "27512bac32ace6ab7133045ba2e9603880ffbc465176821ef85c2abedb77396a",
+    "experiments/rover3d/tests/contract.test.mjs": "24c1b9edf9e1cf103bdeac39f5f1944be0498cf7aa8475b8be2042911a1ec160",
+    "experiments/rover3d/tests/engine.test.mjs": "e604abfa0ad8326c775172b09cc0a3c6453ca6a773b051d266cc1ce14ef5768c",
+    "experiments/rover3d/tests/preflight.test.mjs": "221eed2fb04bac81ce9f2905504ae888e18822d0c11f838bb957b3f8a1632e98"
+  }
+}
