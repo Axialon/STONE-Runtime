@@ -13,8 +13,17 @@ export async function loadRapier() {
     try { entry = require.resolve(ENGINE.package); }
     catch { throw failure('ENGINE_UNAVAILABLE', `Install the reviewed ${ENGINE.package}@${ENGINE.version} package in this experiment before running engine tests.`); }
     let metadata;
-    try { metadata = JSON.parse(await readFile(join(dirname(entry), 'package.json'), 'utf8')); }
-    catch { throw failure('ENGINE_METADATA_INVALID', 'Cannot verify the installed engine package metadata.'); }
+    // Published distributions may put entry points below dist/. Inspect a bounded
+    // ancestry, stopping at the first package boundary; never load a caller path.
+    let directory=dirname(entry);
+    for(let depth=0;depth<4;depth++){
+      try {metadata=JSON.parse(await readFile(join(directory,'package.json'),'utf8'));break;}
+      catch(error){
+        if(error.code!=='ENOENT')throw failure('ENGINE_METADATA_INVALID','Cannot verify the installed engine package metadata.');
+        const parent=dirname(directory);if(parent===directory)break;directory=parent;
+      }
+    }
+    if(!metadata)throw failure('ENGINE_METADATA_INVALID','Cannot verify the installed engine package metadata.');
     if (metadata.name !== ENGINE.package || metadata.version !== ENGINE.version)
       throw failure('ENGINE_VERSION_MISMATCH', 'Installed engine identity does not match the pinned experiment.');
     const module = await import('@dimforge/rapier3d-compat');

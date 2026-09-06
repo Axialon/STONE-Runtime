@@ -1,13 +1,5 @@
 name: Rover verification
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'experiments/rover3d/**'
-      - 'scripts/**'
-      - 'tests/**'
-      - 'package.json'
-      - '.github/workflows/rover-verification.yml'
   workflow_dispatch:
 permissions:
   contents: read
