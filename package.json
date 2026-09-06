@@ -1,6 +1,6 @@
 {
   "name": "stone-runtime-verification",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
@@ -13,6 +13,8 @@
     "verify:all": "npm test && npm run verify:engine && node --test experiments/rover3d/tests/stones.test.mjs experiments/rover3d/tests/session.test.mjs experiments/rover3d/tests/presentation.test.mjs experiments/rover3d/tests/export-replay.test.mjs",
     "verify:browser": "node apps/rover/tests/browser-suite.mjs && node apps/rover/tests/browser-faults.mjs",
     "rover": "node apps/rover/server.mjs",
-    "compare": "node experiments/rover3d/compare.mjs"
+    "compare": "node experiments/rover3d/compare.mjs",
+    "lab": "node scripts/lab.mjs",
+    "lab:render": "node scripts/render-lab-proof.mjs"
   }
 }

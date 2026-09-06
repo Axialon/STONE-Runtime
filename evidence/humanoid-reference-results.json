@@ -1,0 +1,70 @@
+{
+  "kind": "simulated-anchored-arm-reference",
+  "engine": "rapier3d-compat/0.20.0",
+  "tasks": [
+    {
+      "host": "humanoid",
+      "task": "reach",
+      "engine": "rapier3d-compat/0.20.0",
+      "results": [
+        {
+          "stone": "humanoid.fluid",
+          "version": "0.1.0",
+          "seconds": 3.1916666666666664,
+          "status": "succeeded",
+          "pathMetres": 1.1490915313548085,
+          "completed": 3
+        },
+        {
+          "stone": "humanoid.precise",
+          "version": "0.1.0",
+          "seconds": 4.375,
+          "status": "succeeded",
+          "pathMetres": 1.151698370143813,
+          "completed": 3
+        },
+        {
+          "stone": "humanoid.brisk",
+          "version": "0.1.0",
+          "seconds": 2.55,
+          "status": "succeeded",
+          "pathMetres": 1.1433696301166498,
+          "completed": 3
+        }
+      ],
+      "recordings": 3
+    },
+    {
+      "host": "humanoid",
+      "task": "high-reach",
+      "engine": "rapier3d-compat/0.20.0",
+      "results": [
+        {
+          "stone": "humanoid.fluid",
+          "version": "0.1.0",
+          "seconds": 4.291666666666667,
+          "status": "succeeded",
+          "pathMetres": 1.3505398498996057,
+          "completed": 3
+        },
+        {
+          "stone": "humanoid.precise",
+          "version": "0.1.0",
+          "seconds": 6.425,
+          "status": "succeeded",
+          "pathMetres": 1.353492077412526,
+          "completed": 3
+        },
+        {
+          "stone": "humanoid.brisk",
+          "version": "0.1.0",
+          "seconds": 3.058333333333333,
+          "status": "succeeded",
+          "pathMetres": 1.3453887480236852,
+          "completed": 3
+        }
+      ],
+      "recordings": 3
+    }
+  ]
+}

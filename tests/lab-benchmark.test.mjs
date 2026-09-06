@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {loadRapier} from '../experiments/rover3d/engine.mjs';
+import {benchmark,digitalBenchmark} from '../packages/lab/benchmark.mjs';
+import {createCloudClient} from '../packages/lab/cloud.mjs';
+const R=await loadRapier();
+test('fixed humanoid benchmark uses all three actual policies',()=>{const b=benchmark(R,'humanoid','reach');assert.equal(b.results.length,3);assert.ok(b.results.every(r=>r.status==='succeeded'));assert.equal(b.recordings.length,3);assert.ok(b.recordings.every(r=>r.samples.length>5));});
+test('same preset produces identical measured results and recorded poses',()=>assert.deepEqual(benchmark(R,'humanoid','high-reach'),benchmark(R,'humanoid','high-reach')));
+test('rover benchmark retains existing reference outcomes',()=>{const b=benchmark(R,'rover','flat-lane');assert.deepEqual(b.results.map(r=>r.seconds),[8.3,5.6,12.8]);});
+test('unknown hosts and unavailable drone execution reject',()=>{for(const host of ['drone','unknown','__proto__'])assert.throws(()=>benchmark(R,host,'reach'));assert.throws(()=>benchmark(R,'humanoid','anything'));});
+test('digital BENCH and BRIEF are local deterministic tools',async()=>{const a=await digitalBenchmark(R,'digital.compare','humanoid','reach'),b=await digitalBenchmark(R,'digital.brief','humanoid','reach');assert.equal(a.actualExecution,'local');assert.equal(a.model,null);assert.equal(a.results.length,3);assert.equal(b.results.length,3);assert.notEqual(a.text,b.text);});
+test('unconfigured cloud never falsely reports a result',async()=>{await assert.rejects(digitalBenchmark(R,'digital.analyst','rover','flat-lane',{cloud:createCloudClient(null),consent:true}));});
+test('hybrid fallback requires consent to local-only mode and is labelled',async()=>{const cloud=createCloudClient(null);await assert.rejects(digitalBenchmark(R,'digital.hybrid','humanoid','reach',{cloud}));const r=await digitalBenchmark(R,'digital.hybrid','humanoid','reach',{cloud,allowLocalFallback:true});assert.equal(r.execution,'hybrid');assert.equal(r.actualExecution,'local-only');assert.equal(r.cloud.status,'not-configured');assert.equal(r.model,null);});
+test('cloud fixture integration keeps model and local evidence distinguishable',async()=>{const cloud={status:()=>({configured:true}),run:async()=>({execution:'cloud',model:'fixture',report:{summary:'Fixture only',limitations:[]}})};const r=await digitalBenchmark(R,'digital.analyst','humanoid','reach',{cloud,consent:true});assert.equal(r.actualExecution,'cloud');assert.equal(r.model,'fixture');assert.equal(r.cloud.report.summary,'Fixture only');});

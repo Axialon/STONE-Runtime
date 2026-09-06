@@ -3,6 +3,9 @@ Public Stone Repo
 
 **Interchangeable expertise for machines and digital systems.**
 
+## New reference SDK: humanoid and digital Stones
+The component now includes an actual anchored two-joint arm benchmark, three rule-based reach styles, local digital BENCH/BRIEF packages, and a configured-provider cloud/hybrid report adapter. No live cloud provider has been called; drone entries remain planned. Run `npm run lab -- list` or read `docs/LAB_REFERENCE.md`. This is backend/CLI expansion, not a new combined browser release. The existing rover below is preserved.
+
 ## Rover proving ground
 A local, working 3D STONE reference experience. Select FLOW, DART or ANCHOR Rover, run either fixed course, change the controller without replacing the machine, stop, inspect recorded frames and verify an engine replay. Compare measured trade-offs under identical hardware limits. Export the recording, comparison and capability passport as JSON.
 
