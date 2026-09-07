@@ -20,3 +20,7 @@ Imported commands never select a module path or a network endpoint. Only two bui
 Programmatic APIs are inspectStoneData(R, text, target) in packages/lab/inspection.mjs and readStoneFile(file) for browser File input. Core manifest inspection itself does not require a physics world; recording inspection requires the pinned Rapier module. The browser worker initializes its ordinary engine as usual. The existing lab benchmark CLI does not dispatch AUDIT; use the browser or this API. BENCH/BRIEF remain the fixed benchmark tools.
 
 All output declares actualExecution: local and model: null. No generative analysis, cloud inference, signature verification or hardware-safety certification is implied. The local HTTP server is still read-only and allowlisted; imported files are not posted to it. Browser/native mobile platforms beyond the recorded test environment still need validation. ClawSpan is not involved.
+
+## Custom-route recordings
+
+AUDIT additionally accepts stone.rover.route-session/0.1, stone.drone.route-session/0.1 and stone.humanoid.route-session/0.1. The full ordered route is validated and replayed with its original machine/engine and Stop semantics. Results identify custom scope, retain the route, and reject a selected host mismatch or falsely claimed completion. Rover's older session0.1 and learned-model formats are not silently converted. The original input-size/privacy/non-installation and unauthenticated-publisher boundaries still apply.

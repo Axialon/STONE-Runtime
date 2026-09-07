@@ -19,6 +19,8 @@
     "field": "node apps/field-lab/server.mjs",
     "verify:field": "node apps/field-lab/browser.test.mjs && node apps/field-lab/faults.test.mjs && node apps/field-lab/inspection.test.mjs",
     "verify:learned": "npm --prefix experiments/learned-flow test",
-    "verify:learned:browser": "node experiments/learned-flow/tests/browser.mjs"
+    "verify:learned:browser": "node experiments/learned-flow/tests/browser.mjs",
+    "start": "node scripts/start-workbenches.mjs",
+    "verify:routes": "node apps/shared/routes.browser.mjs && node apps/shared/route-editor-faults.browser.mjs && node apps/shared/routes-audit.browser.mjs && node apps/shared/route-worker.browser.mjs"
   }
 }
