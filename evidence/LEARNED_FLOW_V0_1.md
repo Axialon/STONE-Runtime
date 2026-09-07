@@ -1,0 +1,27 @@
+# Learned FLOW 0.1 — fitted artifact and reproducible evaluation
+
+## Delivered boundary
+An optional offline experiment adds a genuinely trained scalar CART policy and its versioned artifact, manifest, source, tests and compact results. It does not alter the accepted rover/drone/arm rules, physics, browser registry or the two existing dependency locks. Field Lab AUDIT can inspect the new manifest; it does not install the model. No cloud inference or physical operation occurred.
+
+## Actual fit and evaluation
+Protocol SHA-256: ee6f721ca0cd79788efb0023f89a322913181703b5ddb56ab33bbe56bbe978e1, frozen before fitting. Model SHA-256: d9a1ef32fa555b5f9d8fdd326a90b59f8c03228b3854564d99bed708d0a210c2. Model JSON is 29,454 bytes with 203 nodes and 102 leaves, maximum depth 8. Library: ml-cart 2.1.1, one fixed configuration and one scalar throttle-minus-brake target. Steering and explicit guards are deterministic harness code. No teacher longitudinal fallback.
+
+48 training teacher episodes yielded 4,021 rows. Separate validation: 16 episodes / 1,330 rows. Separate test: 24 episodes / 1,975 rows. All model-plus-harness and baseline validation/test runs completed, as did two separate seed-0 reference runs. Every learned evaluation episode invoked the fitted model; no warm-up-only or zero-inference success and no out-of-domain fallback occurred. All 42 learned tapes were reexecuted through a fresh real engine to their exact recorded final state. Save/load predictions and decoded actions matched on all 7,326 teacher-state samples. That does not establish model causality, universal input parity or arbitrary-platform determinism.
+
+Test mean total time: 8.840972s learned system versus 9.004167s FLOW. Mean final goal distance: 0.562212m versus 0.540004m. Mean signed-demand absolute error: 0.00637033; maximum: 0.317596. These different stopping locations and fixed-task conditions are reported together, not marketed as universal improvement. No chassis-contact starts in the test runs. Simulation contact counts are not hardware safety certification.
+
+A complete reproduction retained identical model bytes, all train/validation/test rows, all 88 teacher-episode records and all 42 paired learned outcomes/action tapes. The only additional provenance records identify the environment and loaded dependency coverage. No model selection, seed replacement, teacher/physics modification or held-out tuning occurred. Exact cross-partition state/label, feature/target and warm-up-tape overlap counts were zero. Shared geometry and nearby states remain limitations.
+
+## Test and review evidence
+The original 17 tests first failed on twelve missing implementations, then passed after applying the reviewed source proposal. Measurement regressions reproduced incorrect attempt/step accounting and acceptance of engine-fault scores. Five measurement tests now pass; engine faults fail the run instead of receiving an ordinary performance score. Loaded-library and runtime-identity regressions pass. Saved-model, corrupted-model ingress, package metadata, occupied-output directory and real saved-model driving tests are included.
+
+Fresh verification: 422 distinct existing Node tests plus 42 experiment tests = 464 distinct cases, zero failures/skips. Repeated prerequisite groups are counted once. All 62 existing browser cases pass; four additional learned-manifest browser checks pass through ordinary HTTP, CSP, module workers and sandboxed Chrome. Those four verify metadata/compatibility/non-installation, not browser inference. The historical private planar suite was not rerun.
+
+Codex contributed the original source proposal and a fresh source-only review during this work. The review identified missing actual-loaded-module coverage and runtime identity; both were addressed with tests. A prior review's measurement concerns were also verified and corrected. Final implementation changes were self-reviewed and executed independently by the supervising chat. No independent human/security audit is claimed. One review launch returned an indeterminate tool status; an identical retry succeeded without weakening policies.
+
+Environment: Linux x64 / Node22.20.0 / V8 12.4.254.21-node.33 / Rapier0.20.0; exact OS identity is recorded in committed results. Training uses a separately locked 12-entry dependency graph with scripts disabled. The runner hashes lock-listed installed files and verifies coverage of actually loaded CJS files; native ESM Rapier is separately inventoried. These are consistency checks, not malware audits or publisher signatures.
+
+## Reproduce and retain
+Run the experiment's README commands. Full generated raw data and dependency inventories are intentionally not checked into source control; the compact files retain their hashes, runtime identity and every evaluation outcome, and the runner regenerates the full evidence. The trained artifact, complete implementation and tests are committed. Root commands keep learned verification optional so existing users need not install the training graph for the baseline apps.
+
+No paid API, credit purchase, hosted Actions, public application deployment, physical-machine control or ClawSpan change. The next integration gate is actual saved-model browser inference, state-preserving rule/model swaps, model-aware recording/replay and loading/cancellation failures. Metadata compatibility alone does not satisfy that gate.

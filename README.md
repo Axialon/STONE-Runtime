@@ -45,3 +45,9 @@ Rapier 0.20.0 advances all simulation dynamics; Three.js r184 displays their sta
 Current milestone evidence is `evidence/FIELD_LAB_V0_1.md`. Earlier evidence files are historical snapshots. Replay agreement is established on the recorded environment, not every platform. Resource declarations are provisional admission requests, not measured performance or enforced memory/timing quotas. Publisher trust, executable third-party loading, trained weights, live cloud acceptance and marketplace integration remain separate work.
 
 This public component contains reviewed runtime source, not private project history, Drive records or credentials. The private project pins an exact accepted revision. Hosted Actions remain manual-only while unavailable; no schedules, paid inference or automatic/public application deployment are enabled. Original STONE code remains `UNLICENSED` pending an explicit licence choice. Preserve existing upstream terms in `THIRD_PARTY.md`; no font files or copied demo artwork are bundled.
+
+## First fitted policy: FLOW / Learned
+
+The optional `experiments/learned-flow` component includes a genuinely fitted local CART policy, frozen training/evaluation protocol, saved model and compact evidence. It learns FLOW longitudinal commands; steering and guards remain deterministic. It completed16 validation and24 held-out test episodes on the preserved lanes; this does not establish general navigation or superiority. See its README and MODEL_CARD.md.
+
+Install its separately locked dependency graph with lifecycle scripts disabled, then run `npm run verify:learned`. Reproduction is an explicit CLI operation. Browser registries remain unchanged: AUDIT can inspect its core manifest, but live inference/swapping remains a separate integration gate.

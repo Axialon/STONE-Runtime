@@ -1,0 +1,833 @@
+{
+  "format": "stone.learned-flow/0.1",
+  "protocolSha256": "ee6f721ca0cd79788efb0023f89a322913181703b5ddb56ab33bbe56bbe978e1",
+  "library": "ml-cart/2.1.1",
+  "harnessVersion": "stone.flow-imitation.harness/0.1.0",
+  "engine": "rapier3d-compat/0.20.0",
+  "teacher": "rover.flow",
+  "meta": {
+    "trainingDataSha256": "135ba3f76cd1ee8d11ed3473aa8a5e5dc6c2dfffe81db7802c29fcb725d64a0e",
+    "trainingRows": 4021
+  },
+  "tree": {
+    "name": "DTRegression",
+    "options": {
+      "gainFunction": "regression",
+      "splitFunction": "mean",
+      "maxDepth": 8,
+      "minNumSamples": 8,
+      "kind": "regression"
+    },
+    "root": {
+      "splitColumn": 3,
+      "splitValue": 0.010120131941931208,
+      "gain": 30.33640465408557,
+      "left": {
+        "splitColumn": 0,
+        "splitValue": 15.234303477100328,
+        "gain": 5.448767780817966,
+        "left": {
+          "splitColumn": 3,
+          "splitValue": 0.00241299644847522,
+          "gain": 4.278307946472828,
+          "left": {
+            "splitColumn": 3,
+            "splitValue": -0.005537687894109976,
+            "gain": 3.5150133412560276,
+            "left": {
+              "splitColumn": 0,
+              "splitValue": 7.033863224321838,
+              "gain": 1.967347795790624,
+              "left": {
+                "splitColumn": 0,
+                "splitValue": 2.6972105517670855,
+                "gain": 1.6755195264337983,
+                "left": {
+                  "splitColumn": 0,
+                  "splitValue": 1.7763972314235583,
+                  "gain": 0.2219794601488974,
+                  "left": {
+                    "splitColumn": 3,
+                    "splitValue": -0.018165341544186503,
+                    "gain": 0.0011931660707631363,
+                    "left": {
+                      "distribution": -0.04038833009130377
+                    },
+                    "right": {
+                      "distribution": -0.04480062153625568
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 2,
+                    "splitValue": 1.9311492543485784,
+                    "gain": 0.08417258407934639,
+                    "left": {
+                      "distribution": 0.0483927679538273
+                    },
+                    "right": {
+                      "distribution": -0.041835309977895224
+                    }
+                  }
+                },
+                "right": {
+                  "splitColumn": 3,
+                  "splitValue": -0.08036017221441263,
+                  "gain": 0.5725571595059848,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 2.149309361309187,
+                    "gain": 0.1016415003206128,
+                    "left": {
+                      "distribution": -0.043757825930702536
+                    },
+                    "right": {
+                      "distribution": -0.19447403996302565
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 2,
+                    "splitValue": 1.784819124889828,
+                    "gain": 0.11052425262248756,
+                    "left": {
+                      "distribution": 0.24270833552418178
+                    },
+                    "right": {
+                      "distribution": -0.010197973904008686
+                    }
+                  }
+                }
+              },
+              "right": {
+                "distribution": 0.3971964877496245
+              }
+            },
+            "right": {
+              "splitColumn": 3,
+              "splitValue": 0.000776723724136993,
+              "gain": 0.062050018172364683,
+              "left": {
+                "splitColumn": 0,
+                "splitValue": 1.6330142089153368,
+                "gain": 0.045591066097841304,
+                "left": {
+                  "splitColumn": 0,
+                  "splitValue": 1.59021234591571,
+                  "gain": 0.00034890281568081543,
+                  "left": {
+                    "splitColumn": 0,
+                    "splitValue": 1.5276460724173724,
+                    "gain": 0.000042080354895236364,
+                    "left": {
+                      "distribution": -0.03376787858473532
+                    },
+                    "right": {
+                      "distribution": -0.023513663229561433
+                    }
+                  },
+                  "right": {
+                    "distribution": -0.013768340971956844
+                  }
+                },
+                "right": {
+                  "splitColumn": 2,
+                  "splitValue": 2.106891950196766,
+                  "gain": 0.03307148461939804,
+                  "left": {
+                    "splitColumn": 0,
+                    "splitValue": 1.7100334234106898,
+                    "gain": 0.0038941606118515423,
+                    "left": {
+                      "distribution": -0.0013066270973531155
+                    },
+                    "right": {
+                      "distribution": 0.04730646334889855
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 2.131268262901318,
+                    "gain": 0.00691898572311994,
+                    "left": {
+                      "distribution": -0.022490048531216028
+                    },
+                    "right": {
+                      "distribution": 0.0008242407997995512
+                    }
+                  }
+                }
+              },
+              "right": {
+                "splitColumn": 2,
+                "splitValue": 2.178630024566761,
+                "gain": 0.0027940909693335704,
+                "left": {
+                  "splitColumn": 0,
+                  "splitValue": 10.304164830667979,
+                  "gain": 0.00016969816904053352,
+                  "left": {
+                    "distribution": 0.06697508248231412
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 13.589169504931597,
+                    "gain": 0.00006303805996717836,
+                    "left": {
+                      "distribution": 0.022632692233674225
+                    },
+                    "right": {
+                      "distribution": 0.026303231142737866
+                    }
+                  }
+                },
+                "right": {
+                  "splitColumn": 0,
+                  "splitValue": 13.247144711210717,
+                  "gain": 0.00012521900634598475,
+                  "left": {
+                    "splitColumn": 0,
+                    "splitValue": 13.152970316913356,
+                    "gain": 0.00002253460130536873,
+                    "left": {
+                      "distribution": 0.010718217398303373
+                    },
+                    "right": {
+                      "distribution": 0.012717105452077791
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 13.371418002055409,
+                    "gain": 0.00001996545239484295,
+                    "left": {
+                      "distribution": 0.01576965933855993
+                    },
+                    "right": {
+                      "distribution": 0.018189770881062887
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "right": {
+            "splitColumn": 2,
+            "splitValue": 2.1157165602510206,
+            "gain": 0.06149914378164096,
+            "left": {
+              "splitColumn": 2,
+              "splitValue": 2.0465513191342275,
+              "gain": 0.01154271782837738,
+              "left": {
+                "distribution": 0.15639323608859532
+              },
+              "right": {
+                "splitColumn": 2,
+                "splitValue": 2.09063298717506,
+                "gain": 0.002799676238888043,
+                "left": {
+                  "splitColumn": 2,
+                  "splitValue": 2.0784342560152993,
+                  "gain": 0.00020060631567048374,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 2.0696034835102406,
+                    "gain": 0.00003578975638917357,
+                    "left": {
+                      "distribution": 0.11856698006801254
+                    },
+                    "right": {
+                      "distribution": 0.11245375736911707
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 2,
+                    "splitValue": 2.0859143405374656,
+                    "gain": 0.000013065542342262333,
+                    "left": {
+                      "distribution": 0.10215389845988393
+                    },
+                    "right": {
+                      "distribution": 0.09929570122291768
+                    }
+                  }
+                },
+                "right": {
+                  "splitColumn": 0,
+                  "splitValue": 14.325416574111554,
+                  "gain": 0.00010438849488690495,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 2.109558951341577,
+                    "gain": 0.000017776616560730403,
+                    "left": {
+                      "distribution": 0.08265235222868005
+                    },
+                    "right": {
+                      "distribution": 0.07839815302076493
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 1,
+                    "splitValue": 0.000018384048372495346,
+                    "gain": 0.000005871448561985329,
+                    "left": {
+                      "distribution": 0.09100530708492699
+                    },
+                    "right": {
+                      "distribution": 0.09429562287672101
+                    }
+                  }
+                }
+              }
+            },
+            "right": {
+              "splitColumn": 0,
+              "splitValue": 14.021208765521186,
+              "gain": 0.007833583875588284,
+              "left": {
+                "splitColumn": 2,
+                "splitValue": 2.160639609041632,
+                "gain": 0.0016297602075471562,
+                "left": {
+                  "splitColumn": 3,
+                  "splitValue": 0.0036553275094654116,
+                  "gain": 0.00023177190205930968,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 2.1566854931873114,
+                    "gain": 0.000004228415855230577,
+                    "left": {
+                      "distribution": 0.039823245891003035
+                    },
+                    "right": {
+                      "distribution": 0.03774732836851001
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 2,
+                    "splitValue": 2.1475557485949412,
+                    "gain": 0.00002402081290299099,
+                    "left": {
+                      "distribution": 0.04903041369366588
+                    },
+                    "right": {
+                      "distribution": 0.04494018626014169
+                    }
+                  }
+                },
+                "right": {
+                  "splitColumn": 0,
+                  "splitValue": 10.612145224571425,
+                  "gain": 0.00012682621777716926,
+                  "left": {
+                    "distribution": 0.015520719308449577
+                  },
+                  "right": {
+                    "splitColumn": 2,
+                    "splitValue": 2.163737450109897,
+                    "gain": 0.000024158695406618074,
+                    "left": {
+                      "distribution": 0.033967354740460566
+                    },
+                    "right": {
+                      "distribution": 0.030560514009892348
+                    }
+                  }
+                }
+              },
+              "right": {
+                "splitColumn": 0,
+                "splitValue": 14.113374719965755,
+                "gain": 0.0003815158143209864,
+                "left": {
+                  "splitColumn": 2,
+                  "splitValue": 2.1373772067988344,
+                  "gain": 0.000008723446851546407,
+                  "left": {
+                    "distribution": 0.057440903245851674
+                  },
+                  "right": {
+                    "distribution": 0.05446092688363326
+                  }
+                },
+                "right": {
+                  "splitColumn": 2,
+                  "splitValue": 2.1242145137414816,
+                  "gain": 0.00004360091914754866,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 2.120928960671178,
+                    "gain": 0.000006479290444013975,
+                    "left": {
+                      "distribution": 0.0711369953793051
+                    },
+                    "right": {
+                      "distribution": 0.06912598846817479
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 1,
+                    "splitValue": 0.000016478148870539055,
+                    "gain": 0.0000028953214047275905,
+                    "left": {
+                      "distribution": 0.06329883390832475
+                    },
+                    "right": {
+                      "distribution": 0.06561022870469375
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "right": {
+          "distribution": 0.4800000000000003
+        }
+      },
+      "right": {
+        "splitColumn": 2,
+        "splitValue": 1.8221662410088868,
+        "gain": 9.88452759588986,
+        "left": {
+          "splitColumn": 2,
+          "splitValue": 1.7060502272021985,
+          "gain": 0.22693826554014437,
+          "left": {
+            "splitColumn": 2,
+            "splitValue": 1.6373179192375398,
+            "gain": 0.013524794808099762,
+            "left": {
+              "splitColumn": 2,
+              "splitValue": 1.6006126623338675,
+              "gain": 0.0000029721163960264076,
+              "left": {
+                "distribution": 0.4799999999999979
+              },
+              "right": {
+                "distribution": 0.4795878893077945
+              }
+            },
+            "right": {
+              "splitColumn": 0,
+              "splitValue": 13.360270031375165,
+              "gain": 0.0012563688789777535,
+              "left": {
+                "distribution": 0.48000000000000015
+              },
+              "right": {
+                "splitColumn": 2,
+                "splitValue": 1.663761463468131,
+                "gain": 0.00033846985881809974,
+                "left": {
+                  "distribution": 0.4471574900938058
+                },
+                "right": {
+                  "distribution": 0.42860453527361964
+                }
+              }
+            }
+          },
+          "right": {
+            "splitColumn": 0,
+            "splitValue": 13.19413948706442,
+            "gain": 0.018388577185254124,
+            "left": {
+              "splitColumn": 0,
+              "splitValue": 7.993677136542702,
+              "gain": 4.250657704787817e-10,
+              "left": {
+                "distribution": 0.4691661424703125
+              },
+              "right": {
+                "distribution": 0.4800000000000003
+              }
+            },
+            "right": {
+              "splitColumn": 2,
+              "splitValue": 1.7440315760361451,
+              "gain": 0.004607516370905424,
+              "left": {
+                "splitColumn": 2,
+                "splitValue": 1.7257794130541488,
+                "gain": 0.00013542280252165246,
+                "left": {
+                  "splitColumn": 2,
+                  "splitValue": 1.7142075900897376,
+                  "gain": 0.000016063507454020375,
+                  "left": {
+                    "distribution": 0.40239492025424844
+                  },
+                  "right": {
+                    "splitColumn": 2,
+                    "splitValue": 1.7202050720171655,
+                    "gain": 0.000004331421490936115,
+                    "left": {
+                      "distribution": 0.3962793984569539
+                    },
+                    "right": {
+                      "distribution": 0.39451062592866704
+                    }
+                  }
+                },
+                "right": {
+                  "distribution": 0.3866412756280549
+                }
+              },
+              "right": {
+                "splitColumn": 0,
+                "splitValue": 15.11995220783101,
+                "gain": 0.0005626094994627454,
+                "left": {
+                  "distribution": 0.33037773414164595
+                },
+                "right": {
+                  "splitColumn": 1,
+                  "splitValue": 0.0000278287977202532,
+                  "gain": 0.00006643595813463676,
+                  "left": {
+                    "distribution": 0.35910076502613597
+                  },
+                  "right": {
+                    "distribution": 0.37013678124089355
+                  }
+                }
+              }
+            }
+          }
+        },
+        "right": {
+          "splitColumn": 3,
+          "splitValue": 0.16239386333662564,
+          "gain": 3.535094083234357,
+          "left": {
+            "splitColumn": 0,
+            "splitValue": 8.138771661656563,
+            "gain": 1.6129743492610298,
+            "left": {
+              "splitColumn": 2,
+              "splitValue": 2.071661420531341,
+              "gain": 0.1691249246332435,
+              "left": {
+                "splitColumn": 2,
+                "splitValue": 1.9093517050342932,
+                "gain": 0.01205542642513396,
+                "left": {
+                  "distribution": 0.37455810604570944
+                },
+                "right": {
+                  "distribution": 0.262045945911121
+                }
+              },
+              "right": {
+                "splitColumn": 3,
+                "splitValue": 0.05167922796125342,
+                "gain": 0.04435750477632829,
+                "left": {
+                  "splitColumn": 1,
+                  "splitValue": -0.000011606469392127069,
+                  "gain": 0.00634391742688367,
+                  "left": {
+                    "distribution": 0.12722941182746947
+                  },
+                  "right": {
+                    "splitColumn": 3,
+                    "splitValue": 0.028558958475199004,
+                    "gain": 0.0014688590747213444,
+                    "left": {
+                      "distribution": 0.028785694040931915
+                    },
+                    "right": {
+                      "distribution": 0.05906237878130813
+                    }
+                  }
+                },
+                "right": {
+                  "splitColumn": 3,
+                  "splitValue": 0.08254573056098352,
+                  "gain": 0.016356492019477642,
+                  "left": {
+                    "splitColumn": 0,
+                    "splitValue": 7.811990748886251,
+                    "gain": 0.005022683172461333,
+                    "left": {
+                      "distribution": 0.20551707832229157
+                    },
+                    "right": {
+                      "distribution": 0.10799856489522819
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 8.114928769460462,
+                    "gain": 0.000506718477986864,
+                    "left": {
+                      "distribution": 0.15134855345044182
+                    },
+                    "right": {
+                      "distribution": 0.1790790683000102
+                    }
+                  }
+                }
+              }
+            },
+            "right": {
+              "splitColumn": 3,
+              "splitValue": 0.018139550817574613,
+              "gain": 0.4881588161512598,
+              "left": {
+                "splitColumn": 0,
+                "splitValue": 14.737415321329026,
+                "gain": 0.02796728402829264,
+                "left": {
+                  "splitColumn": 0,
+                  "splitValue": 13.495025664264926,
+                  "gain": 0.006151851882955148,
+                  "left": {
+                    "distribution": 0.08761081153235328
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 14.650431634880327,
+                    "gain": 0.0016549033100316825,
+                    "left": {
+                      "distribution": 0.14083198204477965
+                    },
+                    "right": {
+                      "distribution": 0.16318215116192192
+                    }
+                  }
+                },
+                "right": {
+                  "splitColumn": 0,
+                  "splitValue": 14.850106241014542,
+                  "gain": 0.002796163458485372,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 1.9740078606885836,
+                    "gain": 0.00033245534756122345,
+                    "left": {
+                      "distribution": 0.20546825855786985
+                    },
+                    "right": {
+                      "distribution": 0.18839479028906045
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 14.866095547981331,
+                    "gain": 0.000048368948754321425,
+                    "left": {
+                      "distribution": 0.22226301500188744
+                    },
+                    "right": {
+                      "distribution": 0.22947899606657518
+                    }
+                  }
+                }
+              },
+              "right": {
+                "splitColumn": 2,
+                "splitValue": 2.3766734358852,
+                "gain": 0.2888119720048257,
+                "left": {
+                  "splitColumn": 3,
+                  "splitValue": 0.13111036949343025,
+                  "gain": 0.23471265447746553,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 2.0664092899024467,
+                    "gain": 0.14945324191454099,
+                    "left": {
+                      "distribution": 0.28705783748589747
+                    },
+                    "right": {
+                      "distribution": 0.2400549105909518
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 2,
+                    "splitValue": 2.2561922784225663,
+                    "gain": 0.015779540585566718,
+                    "left": {
+                      "distribution": 0.356808993732471
+                    },
+                    "right": {
+                      "distribution": 0.29575442336146734
+                    }
+                  }
+                },
+                "right": {
+                  "splitColumn": 0,
+                  "splitValue": 10.942903771835894,
+                  "gain": 0.0014811487203667574,
+                  "left": {
+                    "splitColumn": 0,
+                    "splitValue": 10.824210168456624,
+                    "gain": 0.00014855995971896108,
+                    "left": {
+                      "distribution": 0.2436904379698907
+                    },
+                    "right": {
+                      "distribution": 0.22522093652602174
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 11.046234155666713,
+                    "gain": 0.00009121666933890653,
+                    "left": {
+                      "distribution": 0.19746012946683408
+                    },
+                    "right": {
+                      "distribution": 0.2018164305932996
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "right": {
+            "splitColumn": 3,
+            "splitValue": 0.17088228061317307,
+            "gain": 0.6510182808535387,
+            "left": {
+              "splitColumn": 2,
+              "splitValue": 2.3993473478545377,
+              "gain": 0.05199189031049544,
+              "left": {
+                "splitColumn": 2,
+                "splitValue": 2.2454880917220175,
+                "gain": 0.02333163754601802,
+                "left": {
+                  "splitColumn": 0,
+                  "splitValue": 10.420748723101898,
+                  "gain": 0.00005107095293854996,
+                  "left": {
+                    "splitColumn": 0,
+                    "splitValue": 8.663275968543696,
+                    "gain": 0.000010670601823263771,
+                    "left": {
+                      "distribution": 0.3927874961684976
+                    },
+                    "right": {
+                      "distribution": 0.3977865051365057
+                    }
+                  },
+                  "right": {
+                    "distribution": 0.4133548159708762
+                  }
+                },
+                "right": {
+                  "splitColumn": 0,
+                  "splitValue": 9.781996800669894,
+                  "gain": 0.005538158641474059,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 2.2764201094776313,
+                    "gain": 0.0004389654025571746,
+                    "left": {
+                      "distribution": 0.3607561154718634
+                    },
+                    "right": {
+                      "distribution": 0.35152508820615186
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 10.125315667677452,
+                    "gain": 0.0010040694376219912,
+                    "left": {
+                      "distribution": 0.3376168800980452
+                    },
+                    "right": {
+                      "distribution": 0.320093124882702
+                    }
+                  }
+                }
+              },
+              "right": {
+                "distribution": 0.2102754777851385
+              }
+            },
+            "right": {
+              "splitColumn": 2,
+              "splitValue": 2.509558442570383,
+              "gain": 0.10687618754812246,
+              "left": {
+                "splitColumn": 0,
+                "splitValue": 9.321659875088079,
+                "gain": 0.028527180306455263,
+                "left": {
+                  "splitColumn": 0,
+                  "splitValue": 9.104265046085057,
+                  "gain": 0.0012618173309550877,
+                  "left": {
+                    "splitColumn": 0,
+                    "splitValue": 8.939824000414992,
+                    "gain": 0.00009568556768778326,
+                    "left": {
+                      "distribution": 0.404746094936771
+                    },
+                    "right": {
+                      "distribution": 0.41893044662679996
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 9.21481740863349,
+                    "gain": 0.00004149638807908033,
+                    "left": {
+                      "distribution": 0.428857316504775
+                    },
+                    "right": {
+                      "distribution": 0.4405634614532971
+                    }
+                  }
+                },
+                "right": {
+                  "splitColumn": 0,
+                  "splitValue": 12.00317850195244,
+                  "gain": 0.012014049230614936,
+                  "left": {
+                    "splitColumn": 2,
+                    "splitValue": 2.4864017973489383,
+                    "gain": 0.0036060664440758835,
+                    "left": {
+                      "distribution": 0.47776250176763
+                    },
+                    "right": {
+                      "distribution": 0.43476431315616926
+                    }
+                  },
+                  "right": {
+                    "splitColumn": 0,
+                    "splitValue": 12.069007876711245,
+                    "gain": 0.00020998783227407588,
+                    "left": {
+                      "distribution": 0.44988932498994605
+                    },
+                    "right": {
+                      "distribution": 0.4250387144052999
+                    }
+                  }
+                }
+              },
+              "right": {
+                "splitColumn": 0,
+                "splitValue": 11.306894303912017,
+                "gain": 0.0038284942165212827,
+                "left": {
+                  "distribution": 0.2571513661190031
+                },
+                "right": {
+                  "distribution": 0.31420066388965384
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

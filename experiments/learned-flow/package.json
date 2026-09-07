@@ -1,0 +1,17 @@
+{
+  "name": "stone-flow-imitation-experiment",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "train": "node run.mjs"
+  },
+  "dependencies": {
+    "ml-cart": "2.1.1"
+  }
+}

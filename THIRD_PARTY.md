@@ -15,3 +15,7 @@ Geometry, interface SVGs, course definitions and styling were authored for this 
 Primary documentation: https://threejs.org/manual/en/installation.html ; https://threejs.org/docs/#OrbitControls ; https://rapier.rs/docs/ ; https://playwright.dev/docs/api/class-browsertype . Package metadata and locks, not those pages, identify the bytes tested here.
 
 Integrity matching is not an independent malware audit or signature-verification claim. STONE original source is not relicensed by adoption of these dependencies.
+
+## Optional learned FLOW experiment
+
+ml-cart 2.1.1 (MIT) supplies actual CART fitting and scalar-tree inference. Its isolated lock pins twelve installed package entries, including ml-matrix 6.15.0 and array utilities. Neither existing application lock changes. Lifecycle scripts stay disabled. Full installed-file inventories and actual loaded CommonJS coverage are recorded by the reproduction command; committed evidence retains aggregate digests. Tarball integrity, installed bytes and publisher authentication are different claims. Upstream documentation: https://mljs.github.io/decision-tree-cart/ . Library code is not vendored or relicensed. The saved model was fitted from STONE simulated reference data, not downloaded pretrained weights.
