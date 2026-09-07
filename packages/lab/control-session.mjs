@@ -1,11 +1,13 @@
 import {getPackage} from './registry.mjs';
+import {readRoute,ROUTE_FORMAT} from '../routes/contract.mjs';
 import {freeze,fields} from './common.mjs';
 // Built-in adapters only; this is not a loader for untrusted package code.
 function engine(R){if(!R||typeof R.version!=='function'||R.version()!=='0.20.0')throw new TypeError('Engine version mismatch.');}
 function admit(spec,id){const p=getPackage(id);if(p.host!==spec.host||p.profile!==spec.profile||p.execution!=='local'||p.availability!=='available'||p.version!=='0.1.0')throw new TypeError('Incompatible Stone.');}
-export function createControlSession(R,spec,task,stoneId){
- engine(R);admit(spec,stoneId);if(!spec.tasks.includes(task))throw new TypeError('Unsupported task.');
- const host=spec.create(R,task),initialStoneId=stoneId,actions=[],assignments=[];
+export function createControlSession(R,spec,task,stoneId,routeInput=null){
+ const route=routeInput===null?null:readRoute(routeInput,spec.host);
+ engine(R);admit(spec,stoneId);if(route?task!=='custom-route':!spec.tasks.includes(task))throw new TypeError('Unsupported task.');
+ const host=spec.create(R,task,route),initialStoneId=stoneId,actions=[],assignments=[];
  let selected=stoneId,disposed=false;
  const alive=()=>{if(disposed)throw new Error('Session is disposed.');};
  const read=()=>{alive();return freeze({frame:host.read(),stoneId:selected});};
@@ -21,7 +23,7 @@ export function createControlSession(R,spec,task,stoneId){
    }
    return freeze({state:read(),frames,actions:delta});
   },
-  export(){alive();return freeze({format:spec.format,profile:spec.profile,machineVersion:spec.version,engineVersion:'0.20.0',taskVersion:'0.1.0',task,initialStoneId,finalStoneId:selected,finalStatus:host.read().status,actions:actions.slice(),assignments:assignments.slice()});},
+  export(){alive();return freeze({format:route?'stone.'+spec.host+'.route-session/0.1':spec.format,profile:spec.profile,machineVersion:spec.version,engineVersion:'0.20.0',taskVersion:route?ROUTE_FORMAT:'0.1.0',task,...(route?{route}:{}),initialStoneId,finalStoneId:selected,finalStatus:host.read().status,actions:actions.slice(),assignments:assignments.slice()});},
   stop(){alive();host.stop();return read();},
   dispose(){if(!disposed){disposed=true;host.dispose();}}
  });
@@ -29,10 +31,12 @@ export function createControlSession(R,spec,task,stoneId){
 export function replayControlSession(R,spec,text){
  engine(R);if(typeof text!=='string'||text.length>800000)throw new TypeError('Invalid recording size.');
  const d=JSON.parse(text);
- if(!fields(d,['format','profile','machineVersion','engineVersion','taskVersion','task','initialStoneId','finalStoneId','finalStatus','actions','assignments'])||d.format!==spec.format||d.profile!==spec.profile||d.machineVersion!==spec.version||d.engineVersion!=='0.20.0'||d.taskVersion!=='0.1.0'||!spec.tasks.includes(d.task)||!Array.isArray(d.actions)||d.actions.length>spec.maxSteps||!Array.isArray(d.assignments)||d.assignments.length!==d.actions.length||!['running','stopped','succeeded','timed-out','out-of-bounds','engine-fault'].includes(d.finalStatus))throw new TypeError('Incompatible recording.');
+ const custom=d?.format==='stone.'+spec.host+'.route-session/0.1';
+ const route=custom?readRoute(d.route,spec.host):null;
+ if(!fields(d,['format','profile','machineVersion','engineVersion','taskVersion','task','initialStoneId','finalStoneId','finalStatus','actions','assignments',...(custom?['route']:[])])||d.format!==(custom?'stone.'+spec.host+'.route-session/0.1':spec.format)||d.profile!==spec.profile||d.machineVersion!==spec.version||d.engineVersion!=='0.20.0'||d.taskVersion!==(custom?ROUTE_FORMAT:'0.1.0')||(custom?d.task!=='custom-route':!spec.tasks.includes(d.task))||!Array.isArray(d.actions)||d.actions.length>spec.maxSteps||!Array.isArray(d.assignments)||d.assignments.length!==d.actions.length||!['running','stopped','succeeded','timed-out','out-of-bounds','engine-fault'].includes(d.finalStatus))throw new TypeError('Incompatible recording.');
  admit(spec,d.initialStoneId);admit(spec,d.finalStoneId);d.assignments.forEach(id=>admit(spec,id));
  if(!d.actions.every(spec.validAction))throw new TypeError('Invalid recorded action.');
- const host=spec.create(R,d.task);
+ const host=spec.create(R,d.task,route);
  try{
   const frames=[freeze({frame:host.read(),stoneId:d.initialStoneId})];
   for(let i=0;i<d.actions.length;i++){

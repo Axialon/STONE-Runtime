@@ -51,3 +51,9 @@ This public component contains reviewed runtime source, not private project hist
 The optional `experiments/learned-flow` component includes a genuinely fitted local CART policy, frozen training/evaluation protocol, saved model and compact evidence. It learns FLOW longitudinal commands; steering and guards remain deterministic. It completed16 validation and24 held-out test episodes on the preserved lanes; this does not establish general navigation or superiority. See its README and MODEL_CARD.md.
 
 Install its separately locked dependency graph with lifecycle scripts disabled, then run `npm run verify:learned`. Reproduction is an explicit CLI operation. Browser registries remain unchanged: AUDIT can inspect its core manifest, but live inference/swapping remains a separate integration gate.
+
+## Interactive Route Studio
+
+Run `npm start` to open both local workbenches, then enter Field Lab at `http://127.0.0.1:4174/#drone`. Navigation to Rover, Drone, Humanoid and Digital is present in both apps. Open Route Studio to click/drag nodes, edit coordinates, reorder checkpoints or import/export a bounded local route file. Apply explicitly resets the run; drafting never teleports the active machine. Custom comparisons retain their exact route and are labelled separately from fixed benchmarks. Digital AUDIT reexecutes the new versioned custom-route recordings. See docs/CUSTOM_ROUTES.md for bounds, supported formats and limitations.
+
+Verify the new browser flows with `npm run verify:routes`. Existing fixed benchmark and learned-model regression commands remain available. No trained policy is silently certified for user routes.

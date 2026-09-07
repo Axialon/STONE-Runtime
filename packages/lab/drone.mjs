@@ -1,13 +1,16 @@
 import {DT,LIMIT,freeze,v,add,sub,mul,dot,cross,length,limit,rotate,clamp,boundedArray,vector,fields} from './common.mjs';
 import {getPackage} from './registry.mjs';
+import {readRoute,ROUTE_FORMAT} from '../routes/contract.mjs';
 /** Toy six-degree-of-freedom simulator only. No hardware, radio or network interface. */
 export const DRONE=freeze({profile:'stone.drone.rotors/0.1',version:'stone.drone.machine/0.1.0',dt:DT,maxSteps:LIMIT,massKg:1.4,maxRotorForce:9,arm:.23,yawMomentPerNewton:.025,
  rotors:[{x:.23,y:0,z:.23,spin:1},{x:-.23,y:0,z:.23,spin:-1},{x:-.23,y:0,z:-.23,spin:1},{x:.23,y:0,z:-.23,spin:-1}]});
 const D=DRONE;
-export function createDrone(R,task='hover'){
+export function createDrone(R,task='hover',routeInput=null){
+ const route=routeInput===null?null:readRoute(routeInput,'drone');
+ if(Boolean(route)!==(task==='custom-route'))throw new TypeError('Custom task and route must be supplied together.');
  if(!R||typeof R.version!=='function'||R.version()!=='0.20.0')throw new TypeError('Engine version mismatch.');
- if(!['hover','inspection'].includes(task))throw new TypeError('Unknown drone task.');
- const targets=freeze(task==='hover'?[v(0,2,0)]:[v(0,1.8,0),v(1.2,1.8,0),v(1.2,2.4,1),v(0,1.8,0)]);
+ if(!route&&!['hover','inspection'].includes(task))throw new TypeError('Unknown drone task.');
+ const targets=route?route.points:freeze(task==='hover'?[v(0,2,0)]:[v(0,1.8,0),v(1.2,1.8,0),v(1.2,2.4,1),v(0,1.8,0)]);
  const world=new R.World(v(0,-9.81,0));world.timestep=DT;
  let body,disposed=false;
  try{
@@ -16,7 +19,7 @@ export function createDrone(R,task='hover'){
   world.createCollider(R.ColliderDesc.cuboid(.22,.07,.22).setMass(D.massKg).setRestitution(0),body);
  }catch(e){world.free();throw e;}
  let tick=0,status='running',completed=0,hold=0,rotors=[0,0,0,0],travel=0,impulse=0,lastPosition=v(0,1.2,0);
- const observe=()=>freeze({host:'drone',profile:D.profile,machineVersion:D.version,engineVersion:'0.20.0',task,taskVersion:'0.1.0',tick,seconds:tick*DT,status,position:{...body.translation()},rotation:{...body.rotation()},velocity:{...body.linvel()},angularVelocity:{...body.angvel()},rotors:rotors.slice(),targets,goal:targets[Math.min(completed,targets.length-1)],completed,hold,travelMetres:travel,thrustImpulseNs:impulse});
+ const observe=()=>freeze({host:'drone',profile:D.profile,machineVersion:D.version,engineVersion:'0.20.0',task,taskVersion:route?ROUTE_FORMAT:'0.1.0',...(route?{route}:{}),tick,seconds:tick*DT,status,position:{...body.translation()},rotation:{...body.rotation()},velocity:{...body.linvel()},angularVelocity:{...body.angvel()},rotors:rotors.slice(),targets,goal:targets[Math.min(completed,targets.length-1)],completed,hold,travelMetres:travel,thrustImpulseNs:impulse});
  let last=observe();
  const end=reason=>{status=reason;last=freeze({...last,status});return last;};
  function step(input){

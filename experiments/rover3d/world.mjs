@@ -1,9 +1,14 @@
 /** Draft adapter: real Rapier acceptance tests must pass before integration. */
 import {PROFILE, ENGINE, MACHINE as M, freeze, readAction, wheelCommands, getCourse, validObservation, parseReplay} from './contract.mjs';
+import {readRoute} from '../../packages/routes/contract.mjs';
 const vec = v => ({x:v.x, y:v.y, z:v.z});
 const quat = q => ({x:q.x, y:q.y, z:q.z, w:q.w});
 
-export function createRoverWorld(R, courseId = 'flat-lane') {
+export function createRoverWorld(R, courseId = 'flat-lane', routeInput = null) {
+  const route=routeInput===null?null:readRoute(routeInput,'rover');
+  if(route&&courseId!=='flat-lane')throw new TypeError('Custom rover routes use the flat lane only.');
+  let completed=0;
+  const target=()=>route?route.points[Math.min(completed,route.points.length-1)]:course.goal;
   const course = getCourse(courseId);
   const world = new R.World(M.gravity);
   world.timestep = M.dt;
@@ -37,9 +42,9 @@ export function createRoverWorld(R, courseId = 'flat-lane') {
     let tick=0, status='running', chassisContactStarts=0, disposed=false;
     const observe=()=>freeze({profile:PROFILE,tick,position:vec(chassis.translation()),rotation:quat(chassis.rotation()),
       linearVelocity:vec(chassis.linvel()),angularVelocity:vec(chassis.angvel()),
-      wheelContacts:M.wheels.map((_,i)=>vehicle.wheelIsInContact(i)===true),goal:vec(course.goal)});
+      wheelContacts:M.wheels.map((_,i)=>vehicle.wheelIsInContact(i)===true),goal:vec(target())});
     let last=freeze({engine:{...ENGINE},machineVersion:M.version,courseId,courseVersion:course.version,
-      observation:observe(),timeSeconds:0,status,chassisContactStarts});
+      observation:observe(),timeSeconds:0,status,chassisContactStarts,...(route?{route,targets:route.points,completed}:{} )});
     const terminal=reason=>{status=reason;last=freeze({...last,status});return last;};
     function step(value) {
       if(disposed)throw new Error('Rover is disposed.');
@@ -61,10 +66,14 @@ export function createRoverWorld(R, courseId = 'flat-lane') {
         if(!validObservation(o))return terminal('engine-fault');
         const p=o.position, v=o.linearVelocity;
         if(p.y<M.minHeight||p.y>M.maxHeight||Math.hypot(p.x,p.z)>M.maxHorizontalDistance)status='out-of-bounds';
-        else if(Math.hypot(p.x-course.goal.x,p.y-course.goal.y,p.z-course.goal.z)<=M.goalRadius&&
-          Math.hypot(v.x,v.y,v.z)<=M.goalSpeed)status='succeeded';
+        else if(Math.hypot(p.x-target().x,p.y-target().y,p.z-target().z)<=M.goalRadius&&
+          Math.hypot(v.x,v.y,v.z)<=M.goalSpeed){
+          if(!route)status='succeeded';
+          else{completed++;if(completed===route.points.length)status='succeeded';}
+        }
         else if(tick>=M.maxSteps)status='timed-out';
-        last=freeze({...last,observation:o,timeSeconds:tick*M.dt,status,chassisContactStarts});
+        if(route&&status==='running'&&tick>=M.maxSteps)status='timed-out';
+        last=freeze({...last,observation:route?observe():o,timeSeconds:tick*M.dt,status,chassisContactStarts,...(route?{completed}:{})});
         return last;
       } catch {return terminal('engine-fault');}
     }

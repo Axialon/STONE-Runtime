@@ -1,4 +1,6 @@
 import R from '/vendor/rapier.mjs';
+import {createRouteSession,compareRoute} from '/packages/routes/runtime.mjs';
+import {readRoute} from '/packages/routes/contract.mjs';
 import {createHumanoidSession,replayHumanoidSession} from '/packages/lab/humanoid-session.mjs';
 import {createDroneSession,replayDroneSession} from '/packages/lab/drone-session.mjs';
 import {benchmark,digitalBenchmark} from '/packages/lab/benchmark.mjs';
@@ -12,7 +14,10 @@ self.onmessage=async({data:m})=>{
   await ready;if(R.version()!=='0.20.0')throw new Error('Engine mismatch.');
   const p=m.payload;let result;
   if(m.type==='inspect'&&fields(p,['text','target']))result=await inspectStoneData(R,p.text,p.target);
-  else if(m.type==='start'&&fields(p,['host','task','stoneId'])&&['humanoid','drone'].includes(p.host)){
+  else if(m.type==='start'&&fields(p,['host','task','stoneId','route'])&&['humanoid','drone'].includes(p.host)&&p.task==='custom-route'){
+   readRoute(p.route,p.host);const next=createRouteSession(R,p.route,p.stoneId);session?.dispose();session=next;result={state:session.read(),recording:session.export()};
+  }else if(m.type==='compare'&&fields(p,['kind','route'])&&p.kind==='route'){result=compareRoute(R,p.route);
+  }else if(m.type==='start'&&fields(p,['host','task','stoneId'])&&['humanoid','drone'].includes(p.host)){
    const create=p.host==='drone'?createDroneSession:createHumanoidSession,next=create(R,p.task,p.stoneId);session?.dispose();session=next;
    result={state:session.read(),recording:session.export()};
   }else if(m.type==='replay'&&fields(p,['host','recording'])&&['humanoid','drone'].includes(p.host))result=(p.host==='drone'?replayDroneSession:replayHumanoidSession)(R,p.recording);

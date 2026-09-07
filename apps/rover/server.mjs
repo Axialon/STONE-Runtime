@@ -6,9 +6,13 @@ import {createHash} from 'node:crypto';
 const here=new URL('./',import.meta.url), root=new URL('../../',here);
 const map=JSON.stringify({imports:{three:'/vendor/three.module.js'}});
 const assets=new Map();
+for(const f of ['navigation.mjs','route-editor.mjs','workbench.css'])assets.set('/shared/'+f,new URL('apps/shared/'+f,root));
+for(const f of ['contract.mjs','rover-session.mjs','runtime.mjs'])assets.set('/packages/routes/'+f,new URL('packages/routes/'+f,root));
 for(const f of ['index.html','style.css','boot.mjs','app.mjs','scene.mjs','client.mjs','worker.mjs'])assets.set('/'+f,new URL(f,here));
 for(const f of ['contract.mjs','world.mjs','stones.mjs','session.mjs'])assets.set('/rover/'+f,new URL('experiments/rover3d/'+f,root));
 for(const [route,path] of [['rapier.mjs','../../experiments/rover3d/node_modules/@dimforge/rapier3d-compat/dist/rapier.mjs'],['three.module.js','node_modules/three/build/three.module.js'],['three.core.js','node_modules/three/build/three.core.js'],['OrbitControls.js','node_modules/three/examples/jsm/controls/OrbitControls.js']])assets.set('/vendor/'+route,new URL(path,here));
+for(const f of ['contract.mjs','world.mjs','stones.mjs','session.mjs'])assets.set('/experiments/rover3d/'+f,new URL('experiments/rover3d/'+f,root));
+for(const f of ['common.mjs','registry.mjs','humanoid.mjs','drone.mjs','control-session.mjs','humanoid-session.mjs','drone-session.mjs'])assets.set('/packages/lab/'+f,new URL('packages/lab/'+f,root));
 const hash=createHash('sha256').update(map).digest('base64');
 export const CSP=`default-src 'none'; script-src 'self' 'sha256-${hash}' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`;
 export async function startServer(port=4173){

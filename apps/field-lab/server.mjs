@@ -8,6 +8,8 @@ const map=JSON.stringify({imports:{three:'/vendor/three.module.js'}});
 const digest=createHash('sha256').update(map).digest('base64');
 const CSP=`default-src 'none'; script-src 'self' 'sha256-${digest}' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`;
 const assets=new Map();
+for(const f of ['navigation.mjs','route-editor.mjs','workbench.css'])assets.set('/shared/'+f,new URL('apps/shared/'+f,root));
+for(const f of ['contract.mjs','rover-session.mjs','runtime.mjs'])assets.set('/packages/routes/'+f,new URL('packages/routes/'+f,root));
 for(const f of ['index.html','style.css','boot.mjs','app.mjs','scene.mjs','worker.mjs'])assets.set('/'+f,new URL(f,here));
 assets.set('/client.mjs',new URL('apps/rover/client.mjs',root));
 for(const f of ['manifest.mjs','compatibility.mjs','reference.mjs'])assets.set('/packages/contract/'+f,new URL('packages/contract/'+f,root));

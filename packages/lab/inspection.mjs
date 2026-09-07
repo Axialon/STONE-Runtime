@@ -4,9 +4,10 @@ import {hostFor,hostForProfile} from '../contract/reference.mjs';
 import {replayDroneSession} from './drone-session.mjs';
 import {replayHumanoidSession} from './humanoid-session.mjs';
 import {freeze} from './common.mjs';
+import {replayRoute} from '../routes/runtime.mjs';
 export const MAX_EVIDENCE_BYTES=2097152;
 const targets=['auto','arena','rover','drone','humanoid','digital','audit'];
-const replayers=Object.freeze({'stone.drone.session/0.2':{host:'drone',run:replayDroneSession},'stone.humanoid.session/0.2':{host:'humanoid',run:replayHumanoidSession}});
+const replayers=Object.freeze({'stone.drone.session/0.2':{host:'drone',run:replayDroneSession},'stone.humanoid.session/0.2':{host:'humanoid',run:replayHumanoidSession},...Object.fromEntries(['rover','drone','humanoid'].map(host=>['stone.'+host+'.route-session/0.1',{host,run:(R,text)=>replayRoute(R,text,host)}]))});
 /** Data-only Digital Stone. Uploaded strings never select imports, providers or permissions. */
 export async function inspectStoneData(R,text,target='auto'){
  if(!targets.includes(target))throw new TypeError('Unknown offline inspection target.');
@@ -26,13 +27,15 @@ export async function inspectStoneData(R,text,target='auto'){
    summary:{id:m.id,name:m.name,schemaVersion:m.schemaVersion,profile:m.compatibility.profile,machineVersion:m.compatibility.machineVersion??null,engineVersion:m.compatibility.engineVersion??null,declaredExecution:m.execution.mode,requestedModel:m.implementation.modelRef,checkedHost:host.profile},
    text:`Valid manifest for ${m.id}. ${compatibility.compatible?'Compatible with':'Not compatible with'} the selected offline reference policy. No installation, model loading or permission grant occurred.`});
  }
- if(typeof data.format!=='string'||!Object.hasOwn(replayers,data.format))throw new TypeError('Unsupported evidence format. Use a core manifest or versioned drone/arm recording.');
+ if(typeof data.format!=='string'||!Object.hasOwn(replayers,data.format))throw new TypeError('Unsupported evidence format. Use a core manifest, supported drone/arm recording or versioned custom-route recording.');
  const spec=replayers[data.format];
  if(target!=='auto'&&target!==spec.host)throw new TypeError('Selected host does not match the recording.');
  let replay;try{replay=spec.run(R,JSON.stringify(data));}catch{throw new TypeError('Recording failed version, action or terminal-state verification.');}
- const f=replay.state.frame;
+ const f=replay.state.frame,steps=f.tick??f.observation.tick,seconds=f.seconds??f.timeSeconds;
+ const position=f.tip??f.position??f.observation.position;
+ const travel=f.travelMetres??replay.frames.slice(1).reduce((sum,s,i)=>{const a=replay.frames[i].frame.observation.position,b=s.frame.observation.position;return sum+Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z);},0);
  return freeze({...base,kind:'recording',valid:true,verification:'engine-reexecution',compatibility:null,errors:[],
-  summary:{host:spec.host,profile:data.profile,machineVersion:data.machineVersion,engineVersion:data.engineVersion,task:data.task,taskVersion:data.taskVersion,steps:f.tick,seconds:f.seconds,status:f.status,finalStoneId:replay.state.stoneId,attributedStoneIds:[...new Set(data.assignments)],position:f.tip??f.position},
-  results:[{stone:'Saved '+spec.host+' recording',status:f.status,seconds:f.seconds,pathMetres:f.travelMetres}],
-  text:`Reexecuted ${f.tick} admitted ${spec.host} commands. Terminal status ${f.status} matches the recording. The digest identifies the supplied bytes; it does not authenticate the publisher, original run, claimed controller attribution or model weights.`});
+  summary:{host:spec.host,profile:data.profile,machineVersion:data.machineVersion,engineVersion:data.engineVersion,task:data.task,taskVersion:data.taskVersion,steps,seconds,status:f.status,finalStoneId:replay.state.stoneId,attributedStoneIds:[...new Set(data.assignments)],position,...(data.route?{scope:'custom-route',route:data.route}:{})},
+  results:[{stone:'Saved '+spec.host+' recording',status:f.status,seconds,pathMetres:travel}],
+  text:`Reexecuted ${steps} admitted ${spec.host} commands. Terminal status ${f.status} matches the recording. The digest identifies the supplied bytes; it does not authenticate the publisher, original run, claimed controller attribution or model weights.`});
 }
