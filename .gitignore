@@ -14,3 +14,6 @@ evidence/learned-flow-browser/
 experiments/learned-flow/artifacts/
 
 evidence/routes-local/
+
+tools/model-bundle/dist/
+evidence/live-model-local/

@@ -94,7 +94,7 @@ function baselineSnapshot() {
   const engineRoot = findPackage(engineRequire.resolve(ENGINE.package), ENGINE.package, ENGINE.version);
   const sourcePaths = ['experiments/rover3d/contract.mjs', 'experiments/rover3d/world.mjs',
     'experiments/rover3d/stones.mjs', 'experiments/rover3d/engine.mjs',
-    'experiments/learned-flow/experiment.mjs', 'experiments/learned-flow/run.mjs', 'experiments/learned-flow/measurements.mjs', 'experiments/learned-flow/dependency-proof.mjs',
+    'experiments/learned-flow/experiment.mjs', 'experiments/learned-flow/run.mjs', 'experiments/learned-flow/measurements.mjs', 'experiments/learned-flow/dependency-proof.mjs', 'experiments/learned-flow/policy.mjs',
     'experiments/learned-flow/package.json', 'experiments/learned-flow/package-lock.json',
     'experiments/learned-flow/protocol.json'];
   for (const path of ['experiments/rover3d/package.json', 'experiments/rover3d/package-lock.json']) {
@@ -104,7 +104,7 @@ function baselineSnapshot() {
   return {declaredBaseRevision: P.baseRevision,
     revisionAuthentication: 'Not independently verified; source and installed dependency bytes are recorded and checked for changes during this run.',
     environment: environmentIdentity(),
-    loadedCommonJS: proveLoadedModules(here,dependencies,Object.keys(createRequire(import.meta.url).cache)),
+    loadedCommonJS: proveLoadedModules(here,dependencies,Object.keys(createRequire(import.meta.url).cache),{'protocol.json':protocolSha256}),
     lockedPackageEntries: Object.keys(lock.packages).length,
     installedLockedPackages: Object.keys(dependencies).length, modules, dependencies,
     engine: {package: ENGINE.package, version: ENGINE.version, ...directoryHashes(engineRoot)}};

@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {OrbitControls} from '/vendor/OrbitControls.js';
 import {MACHINE as M,getCourse} from '/rover/contract.mjs';
-export const COLORS={'rover.flow':'#63b6ae','rover.dart':'#e0a064','rover.anchor':'#b0a4d8'};
+export const COLORS={'rover.flow':'#63b6ae','rover.dart':'#e0a064','rover.anchor':'#b0a4d8','rover.flow-learned':'#c9d2c9'};
 export function createView(element,plan){
   let current=null,history=[],cursor=0,course=getCourse('ramp-lane'),mode='3d',renderer=null,controls=null,comparison=[],following=false,healthy=true,route=null,checkpointRings=[];
   const scene=new T.Scene();scene.background=new T.Color('#19282d');scene.fog=new T.Fog('#19282d',32,72);
@@ -38,7 +38,7 @@ export function createView(element,plan){
   function paint(){if(mode==='plan'){drawPlan();return;}if(renderer){renderer.render(scene,camera);}}
   function resize(){const r=element.parentElement.getBoundingClientRect();if(renderer){renderer.setSize(r.width,r.height);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();}paint();}
   function setMode(value){mode=value==='3d'&&renderer&&healthy?'3d':'plan';element.hidden=mode==='plan';plan.hidden=mode!=='plan';paint();return mode;}
-  function update(sample,frames=[],index=frames.length-1){current=sample;history=frames;cursor=Math.max(0,index);if(sample){checkpointRings.forEach((r,i)=>{r.material.color.set(i===(sample.frame.completed??0)?'#edca8d':'#83a79b');r.material.opacity=i<(sample.frame.completed??0)?.25:.85;});const o=sample.frame.observation;body.position.set(o.position.x,o.position.y,o.position.z);body.quaternion.set(o.rotation.x,o.rotation.y,o.rotation.z,o.rotation.w);if(following&&controls){const next=new T.Vector3(o.position.x,o.position.y,o.position.z),delta=next.clone().sub(controls.target);camera.position.add(delta);controls.target.copy(next);controls.update();}stone.material.color.set(COLORS[sample.stoneId]??'#bbb');sample.visual.wheels.forEach((w,i)=>{wheels[i].group.position.set(w.connection.x,w.connection.y-w.suspensionLength,w.connection.z);wheels[i].group.rotation.set(w.rotation,w.steering,0,'YXZ');});}
+  function update(sample,frames=[],index=frames.length-1){current=sample;history=frames;cursor=Math.max(0,index);body.visible=!!sample;if(sample){checkpointRings.forEach((r,i)=>{r.material.color.set(i===(sample.frame.completed??0)?'#edca8d':'#83a79b');r.material.opacity=i<(sample.frame.completed??0)?.25:.85;});const o=sample.frame.observation;body.position.set(o.position.x,o.position.y,o.position.z);body.quaternion.set(o.rotation.x,o.rotation.y,o.rotation.z,o.rotation.w);if(following&&controls){const next=new T.Vector3(o.position.x,o.position.y,o.position.z),delta=next.clone().sub(controls.target);camera.position.add(delta);controls.target.copy(next);controls.update();}stone.material.color.set(COLORS[sample.stoneId]??'#bbb');sample.visual.wheels.forEach((w,i)=>{wheels[i].group.position.set(w.connection.x,w.connection.y-w.suspensionLength,w.connection.z);wheels[i].group.rotation.set(w.rotation,w.steering,0,'YXZ');});}
     let n=0;for(let i=1;i<=cursor&&i<frames.length&&n<capacity;i++){const col=new T.Color(COLORS[frames[i].appliedStoneId]??'#a8b8b2');for(const f of [frames[i-1],frames[i]]){const p=f.frame.observation.position;positions.set([p.x,p.y+.04,p.z],n*3);colors.set([col.r,col.g,col.b],n*3);n++;}}
     geometry.setDrawRange(0,n);geometry.attributes.position.needsUpdate=true;geometry.attributes.color.needsUpdate=true;paint();
   }

@@ -13,6 +13,11 @@ for(const f of ['contract.mjs','world.mjs','stones.mjs','session.mjs'])assets.se
 for(const [route,path] of [['rapier.mjs','../../experiments/rover3d/node_modules/@dimforge/rapier3d-compat/dist/rapier.mjs'],['three.module.js','node_modules/three/build/three.module.js'],['three.core.js','node_modules/three/build/three.core.js'],['OrbitControls.js','node_modules/three/examples/jsm/controls/OrbitControls.js']])assets.set('/vendor/'+route,new URL(path,here));
 for(const f of ['contract.mjs','world.mjs','stones.mjs','session.mjs'])assets.set('/experiments/rover3d/'+f,new URL('experiments/rover3d/'+f,root));
 for(const f of ['common.mjs','registry.mjs','humanoid.mjs','drone.mjs','control-session.mjs','humanoid-session.mjs','drone-session.mjs'])assets.set('/packages/lab/'+f,new URL('packages/lab/'+f,root));
+assets.set('/model-worker.mjs',new URL('model-worker.mjs',here));
+for(const f of ['identity.mjs','recording.mjs','client-state.mjs','manifest.mjs'])assets.set('/packages/learned-rover/'+f,new URL('packages/learned-rover/'+f,root));
+assets.set('/vendor/learned.mjs',new URL('tools/model-bundle/dist/learned.mjs',root));
+assets.set('/vendor/learned-notices.txt',new URL('tools/model-bundle/dist/THIRD_PARTY_NOTICES.txt',root));
+assets.set('/models/flow-v0.1.json',new URL('experiments/learned-flow/model/model.json',root));
 const hash=createHash('sha256').update(map).digest('base64');
 export const CSP=`default-src 'none'; script-src 'self' 'sha256-${hash}' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`;
 export async function startServer(port=4173){
@@ -25,7 +30,7 @@ export async function startServer(port=4173){
     let path;try{path=new URL(req.url,'http://'+req.headers.host).pathname;}catch{res.writeHead(400);res.end();return;}
     const file=assets.get(path==='/'?'/index.html':path);if(!file){res.writeHead(404);res.end('Not found');return;}
     try{let data=await readFile(file);if(path==='/'||path==='/index.html')data=Buffer.from(data.toString().replace('<!-- IMPORTMAP -->',`<script type="importmap">${map}</script>`));
-      res.setHeader('Content-Type',path.endsWith('.css')?'text/css; charset=utf-8':path==='/'||path.endsWith('.html')?'text/html; charset=utf-8':'text/javascript; charset=utf-8');res.setHeader('Content-Length',data.length);res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);
+      res.setHeader('Content-Type',path.endsWith('.json')?'application/json; charset=utf-8':path.endsWith('.txt')?'text/plain; charset=utf-8':path.endsWith('.css')?'text/css; charset=utf-8':path==='/'||path.endsWith('.html')?'text/html; charset=utf-8':'text/javascript; charset=utf-8');res.setHeader('Content-Length',data.length);res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);
     }catch{res.writeHead(404);res.end('Asset unavailable. Check pinned dependencies.');}
   });
   await new Promise((ok,no)=>{server.once('error',no);server.listen(port,'127.0.0.1',ok);});

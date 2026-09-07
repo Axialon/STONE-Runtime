@@ -21,6 +21,10 @@
     "verify:learned": "npm --prefix experiments/learned-flow test",
     "verify:learned:browser": "node experiments/learned-flow/tests/browser.mjs",
     "start": "node scripts/start-workbenches.mjs",
-    "verify:routes": "node apps/shared/routes.browser.mjs && node apps/shared/route-editor-faults.browser.mjs && node apps/shared/routes-audit.browser.mjs && node apps/shared/route-worker.browser.mjs"
+    "verify:routes": "node apps/shared/routes.browser.mjs && node apps/shared/route-editor-faults.browser.mjs && node apps/shared/routes-audit.browser.mjs && node apps/shared/route-worker.browser.mjs",
+    "build:models": "node tools/model-bundle/build.mjs",
+    "verify:model-build": "node --test tools/model-bundle/build.test.mjs tools/model-bundle/server.test.mjs && node tools/model-bundle/build.mjs --check",
+    "verify:models:browser": "node apps/rover/tests/model-browser.mjs && node apps/rover/tests/model-faults.mjs && node apps/rover/tests/model-inspection-browser.mjs && node apps/rover/tests/model-review-regressions.mjs && node apps/rover/tests/model-lifecycle.mjs",
+    "verify:full": "npm run verify:all && npm run verify:learned && npm run verify:model-build && npm run verify:field && npm run verify:browser && npm run verify:routes && npm run verify:learned:browser && npm run verify:models:browser"
   }
 }

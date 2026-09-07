@@ -7,10 +7,10 @@ import {createRoverWorld} from '../rover3d/world.mjs';
 import {decide} from '../rover3d/stones.mjs';
 
 export const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
-export const protocolSha256 = 'ee6f721ca0cd79788efb0023f89a322913181703b5ddb56ab33bbe56bbe978e1';
+import {PROTOCOL,protocolSha256,LIMIT,MAX_ROWS,OPTIONS,inDomain,extractFeatures,guardKind,harnessAction,predictAction,validateMetadata,validateOptions,validateTree,decodeArtifact} from './policy.mjs';
+export {PROTOCOL,protocolSha256,extractFeatures,guardKind,harnessAction,predictAction};
 const protocolBytes = readFileSync(new URL('./protocol.json', import.meta.url));
 if (sha256(protocolBytes) !== protocolSha256) throw new Error('Frozen protocol digest mismatch.');
-export const PROTOCOL = freeze(JSON.parse(protocolBytes.toString('utf8')));
 const P = PROTOCOL;
 const require = createRequire(import.meta.url);
 export const LIBRARY_ENTRY = require.resolve('ml-cart');
@@ -34,28 +34,10 @@ const {DecisionTreeRegression} = require('ml-cart');
 if (typeof DecisionTreeRegression !== 'function' || typeof DecisionTreeRegression.load !== 'function')
   throw new Error('Expected scalar regression API is unavailable.');
 
-const LIMIT = 1048576;
-const MAX_ROWS = 20000;
-const OPTIONS = Object.freeze({...P.modelOptions, kind: 'regression'});
 const ownedModels = new WeakMap();
-const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
 const fail = message => { throw new TypeError(message); };
-function exactKeys(value, keys) {
-  if (!value || typeof value !== 'object' || Array.isArray(value) ||
-      ![Object.prototype, null].includes(Object.getPrototypeOf(value))) return false;
-  const descriptors = Object.getOwnPropertyDescriptors(value);
-  const actual = Reflect.ownKeys(descriptors);
-  return actual.length === keys.length && keys.every(key => Object.hasOwn(descriptors, key)) &&
-    actual.every(key => typeof key === 'string' && keys.includes(key) &&
-      Object.hasOwn(descriptors[key], 'value') && descriptors[key].enumerable);
-}
 function checkSeed(seed) {
   if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) fail('Seed must be uint32.');
-}
-function inDomain(features) {
-  return Array.isArray(features) && features.length === 4 &&
-    Array.from(features).every((x, i) => Number.isFinite(x) &&
-      x >= P.featureDomain[i][0] && x <= P.featureDomain[i][1]);
 }
 function checkIdentity(partition, seed, course, collectRows) {
   checkSeed(seed);
@@ -93,45 +75,6 @@ export function buildWarmup(seed) {
   return tape;
 }
 
-export function extractFeatures(o) {
-  if (!validObservation(o)) fail('Invalid rover observation.');
-  const q = o.rotation, v = o.linearVelocity;
-  const dx = o.goal.x - o.position.x, dz = o.goal.z - o.position.z;
-  const fx = 2 * (q.x * q.z + q.w * q.y);
-  const fz = 1 - 2 * (q.x * q.x + q.y * q.y);
-  const fy = 2 * (q.y * q.z - q.w * q.x);
-  const angle = Math.atan2(dx, dz) - Math.atan2(fx, fz);
-  const features = [Math.hypot(dx, dz), Math.atan2(Math.sin(angle), Math.cos(angle)),
-    v.x * fx + v.y * fy + v.z * fz, fy];
-  if (!features.every(Number.isFinite)) fail('Nonfinite derived observation features.');
-  return features;
-}
-function guardFor(o, features) {
-  if (o.wheelContacts.filter(Boolean).length < 2) return 'airborne';
-  if (features[0] < 0.55) return 'goal';
-  return inDomain(features) ? null : 'out-of-domain';
-}
-export function guardKind(o) { return guardFor(o, extractFeatures(o)); }
-export function harnessAction(demand, o) {
-  const features = extractFeatures(o), guard = guardFor(o, features);
-  if (guard === 'airborne') return readAction({throttle: 0, steering: 0, brake: 0.4});
-  if (guard === 'goal') return readAction({throttle: 0, steering: 0, brake: 1});
-  if (guard === 'out-of-domain') return readAction(P.outOfDomainAction);
-  if (!Number.isFinite(demand)) fail('Regressor demand must be finite.');
-  return readAction({throttle: clamp(demand, 0, 0.48),
-    steering: clamp(features[1] * 1.6 - o.angularVelocity.y * 0.35, -1, 1),
-    brake: clamp(-demand, 0, 1)});
-}
-export function predictAction(model, o) {
-  const features = extractFeatures(o);
-  if (guardFor(o, features)) return harnessAction(null, o);
-  if (!model || typeof model.predict !== 'function') fail('Missing scalar regressor.');
-  const prediction = model.predict([features]);
-  if (!Array.isArray(prediction) || prediction.length !== 1 || !Number.isFinite(prediction[0]))
-    fail('Invalid scalar model prediction.');
-  return harnessAction(prediction[0], o);
-}
-
 export function fitRegressor(rows) {
   if (!Array.isArray(rows) || rows.length < P.modelOptions.minNumSamples || rows.length > MAX_ROWS)
     fail('Training requires 8 through 20000 rows.');
@@ -151,16 +94,6 @@ export function fitRegressor(rows) {
   return model;
 }
 
-function validateMetadata(meta) {
-  if (!exactKeys(meta, ['trainingDataSha256', 'trainingRows']) ||
-      !/^[a-f0-9]{64}$/.test(meta.trainingDataSha256) ||
-      !Number.isInteger(meta.trainingRows) || meta.trainingRows < P.modelOptions.minNumSamples ||
-      meta.trainingRows > MAX_ROWS) fail('Invalid model metadata.');
-}
-function validateOptions(options) {
-  if (!exactKeys(options, Object.keys(OPTIONS)) ||
-      Object.keys(OPTIONS).some(key => options[key] !== OPTIONS[key])) fail('Unsupported tree options.');
-}
 function exportTree(model) {
   const raw = model.toJSON();
   if (raw.name !== 'DTRegression') fail('Expected a regression tree.');
@@ -180,31 +113,6 @@ function exportTree(model) {
   // constant leaves may contain an unused Infinity gain in the original object.
   return {name: raw.name, options: {...OPTIONS}, root: copy(raw.root, 0)};
 }
-function validateTree(tree) {
-  if (!exactKeys(tree, ['name', 'options', 'root']) || tree.name !== 'DTRegression')
-    fail('Unsupported tree format.');
-  validateOptions(tree.options);
-  let count = 0;
-  function visit(node, depth) {
-    if (depth > P.modelOptions.maxDepth || ++count > 511) fail('Oversized regression tree.');
-    if (exactKeys(node, ['distribution'])) {
-      // The arithmetic mean can round slightly beyond a training target endpoint.
-      if (!Number.isFinite(node.distribution) || node.distribution < -1 - 1e-12 ||
-          node.distribution > 0.48 + 1e-12) fail('Invalid scalar leaf.');
-      return;
-    }
-    if (!exactKeys(node, ['splitColumn', 'splitValue', 'gain', 'left', 'right']) ||
-        depth >= P.modelOptions.maxDepth || !Number.isInteger(node.splitColumn) ||
-        node.splitColumn < 0 || node.splitColumn >= 4) fail('Invalid branch shape or feature.');
-    const [lo, hi] = P.featureDomain[node.splitColumn];
-    if (!Number.isFinite(node.splitValue) || node.splitValue < lo || node.splitValue > hi ||
-        !Number.isFinite(node.gain) || node.gain <= 0 || node.gain > MAX_ROWS * 1.48 ** 2)
-      fail('Invalid branch parameters.');
-    visit(node.left, depth + 1);
-    visit(node.right, depth + 1);
-  }
-  visit(tree.root, 0);
-}
 export function saveArtifact(model, meta) {
   validateMetadata(meta);
   if (!ownedModels.has(model) || ownedModels.get(model) !== meta.trainingRows)
@@ -222,13 +130,7 @@ export function loadArtifact(text, expectedSha) {
   if (typeof text !== 'string' || text.length > LIMIT || Buffer.byteLength(text, 'utf8') > LIMIT ||
       typeof expectedSha !== 'string' || !/^[a-f0-9]{64}$/.test(expectedSha) || sha256(text) !== expectedSha)
     fail('Artifact size or source-byte digest mismatch.');
-  const value = JSON.parse(text);
-  if (!exactKeys(value, ['format', 'protocolSha256', 'library', 'harnessVersion', 'engine', 'teacher', 'meta', 'tree']) ||
-      value.format !== 'stone.learned-flow/0.1' || value.protocolSha256 !== protocolSha256 ||
-      value.library !== P.library || value.harnessVersion !== P.harnessVersion ||
-      value.engine !== P.engine || value.teacher !== P.teacher) fail('Incompatible artifact identity.');
-  validateMetadata(value.meta);
-  validateTree(value.tree);
+  const value = decodeArtifact(text);
   // expectedSha is supplied by the caller; identity fields are compatibility checks,
   // not signatures or evidence of authorship. JSON cannot select an executable import.
   const model = DecisionTreeRegression.load(value.tree);
