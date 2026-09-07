@@ -7,7 +7,7 @@ const here=dirname(fileURLToPath(new URL('../package.json',import.meta.url)));
 const hash=f=>createHash('sha256').update(readFileSync(f)).digest('hex');
 const cache=createRequire(import.meta.url).cache;
 test('actual CJS entries are covered by installed dependency file inventories',()=>{
- const files=Object.keys(cache),inventories={};
+ const files=Object.keys(cache).filter(p=>p.includes('/node_modules/')),inventories={};
  for(const f of files){const rel=f.slice(here.length+1),parts=rel.split('/'),end=parts.lastIndexOf('node_modules')+2;
  const pack=parts.slice(0,end).join('/'),file=parts.slice(end).join('/');inventories[pack]??={files:{}};inventories[pack].files[file]=hash(f);}
  const r=proveLoadedModules(here,inventories,files);assert.ok(r.length>2);assert.ok(r.some(x=>x.path.endsWith('ml-cart/cart.js')));
@@ -21,4 +21,12 @@ test('an unlisted or ancestor-resolved module is not declared covered',()=>{
 test('environment identity names actual Node/V8 and the exact rover profile',()=>{
  const e=environmentIdentity();assert.equal(e.node,process.version);assert.equal(e.v8,process.versions.v8);
  assert.equal(e.arch,process.arch);assert.equal(e.platform,process.platform);assert.equal(e.profile,'stone.rover.control/0.1');assert.ok(e.osRelease);
+});
+
+test('JSON imported by ESM and exposed in the CJS cache needs explicit source-byte coverage',()=>{
+ const file=here+'/protocol.json';
+ assert.throws(()=>proveLoadedModules(here,{},[file]));
+ assert.throws(()=>proveLoadedModules(here,{},[file],{'protocol.json':'0'.repeat(64)}));
+ const got=proveLoadedModules(here,{},[file],{'protocol.json':hash(file)});
+ assert.equal(got[0].path,'protocol.json');assert.equal(got[0].package,'verified-source');
 });

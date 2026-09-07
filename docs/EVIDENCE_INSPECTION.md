@@ -24,3 +24,7 @@ All output declares actualExecution: local and model: null. No generative analys
 ## Custom-route recordings
 
 AUDIT additionally accepts stone.rover.route-session/0.1, stone.drone.route-session/0.1 and stone.humanoid.route-session/0.1. The full ordered route is validated and replayed with its original machine/engine and Stop semantics. Results identify custom scope, retain the route, and reject a selected host mismatch or falsely claimed completion. Rover's older session0.1 and learned-model formats are not silently converted. The original input-size/privacy/non-installation and unauthenticated-publisher boundaries still apply.
+
+## Rover model-aware recordings
+
+Digital AUDIT additionally accepts `stone.rover.policy-session/0.1`. Unlike metadata/route-only inspection, this branch loads the fixed pinned local FLOW verifier and may invoke it to recompute recorded commands. Reports expose `verificationModel` and actual inference counts; the UI must not call this a no-model operation. It reuses policy-and-engine replay, retains Stop/final selection, and authenticates neither a publisher nor the occurrence of an original run. No file-provided model path or executable is loaded. Missing optional bundle/model fails explicitly. See docs/LIVE_MODEL_STONES.md.

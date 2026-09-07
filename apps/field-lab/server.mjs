@@ -21,6 +21,8 @@ for(const [route,path] of [
  ['three.core.js','apps/rover/node_modules/three/build/three.core.js'],
  ['OrbitControls.js','apps/rover/node_modules/three/examples/jsm/controls/OrbitControls.js']
 ])assets.set('/vendor/'+route,new URL(path,root));
+assets.set('/vendor/learned.mjs',new URL('tools/model-bundle/dist/learned.mjs',root));
+assets.set('/models/flow-v0.1.json',new URL('experiments/learned-flow/model/model.json',root));
 export async function startFieldServer(port=4174){
  if(!Number.isInteger(port)||port<0||port>65535)throw new TypeError('Invalid port.');
  const server=createServer(async(req,res)=>{
@@ -37,7 +39,7 @@ export async function startFieldServer(port=4174){
    let data=await readFile(file);
    const html=pathname==='/'||pathname==='/index.html';
    if(html)data=Buffer.from(data.toString().replace('<!-- IMPORTMAP -->',`<script type="importmap">${map}</script>`));
-   res.setHeader('Content-Type',html?'text/html; charset=utf-8':pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8');
+   res.setHeader('Content-Type',html?'text/html; charset=utf-8':pathname.endsWith('.json')?'application/json; charset=utf-8':pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8');
    res.setHeader('Content-Length',data.length);res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);
   }catch{res.writeHead(404);res.end('Local asset unavailable; check the pinned installation.');}
  });

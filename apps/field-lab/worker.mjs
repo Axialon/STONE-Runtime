@@ -13,7 +13,14 @@ self.onmessage=async({data:m})=>{
  try{
   await ready;if(R.version()!=='0.20.0')throw new Error('Engine mismatch.');
   const p=m.payload;let result;
-  if(m.type==='inspect'&&fields(p,['text','target']))result=await inspectStoneData(R,p.text,p.target);
+  if(m.type==='inspect'&&fields(p,['text','target'])){
+   if(typeof p.text!=='string'||p.text.length>2097152)throw new Error('Invalid evidence size.');
+   if(JSON.parse(p.text)?.format==='stone.rover.policy-session/0.1'){
+    if(!['auto','rover'].includes(p.target))throw new Error('Wrong policy host.');
+    const api=await import('/vendor/learned.mjs'),verifiedModel=await api.fetchPolicy();
+    try{result=await api.inspectPolicyRecording(R,p.text,p.target,verifiedModel);}finally{verifiedModel.dispose();}
+   }else result=await inspectStoneData(R,p.text,p.target);
+  }
   else if(m.type==='start'&&fields(p,['host','task','stoneId','route'])&&['humanoid','drone'].includes(p.host)&&p.task==='custom-route'){
    readRoute(p.route,p.host);const next=createRouteSession(R,p.route,p.stoneId);session?.dispose();session=next;result={state:session.read(),recording:session.export()};
   }else if(m.type==='compare'&&fields(p,['kind','route'])&&p.kind==='route'){result=compareRoute(R,p.route);
