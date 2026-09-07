@@ -1,52 +1,47 @@
 # STONE-Runtime
-Public Stone Repo
 
 **Interchangeable expertise for machines and digital systems.**
 
-## Current reference capabilities
-| Family | Working capability | Boundary |
-| --- | --- | --- |
-| Rover | Interactive Three.js/Rapier workbench, three rules, swaps, replay and comparisons | Two fixed lanes; not calibrated hardware |
-| Drone | Real rigid-body simulation, CINEMA/SURVEY/AGILE rules, two tasks, benchmark and action-replay checks | Headless API/CLI; no live drone UI or aircraft interface |
-| Humanoid | Anchored two-joint arm, three rules, two reach tasks and sampled pose benchmarking | No walking, full-body balance or grasping; no live arm UI yet |
-| Digital | BENCH/BRIEF local reference tools; explicit HYBRID local-only fallback | Deterministic summaries, not trained inference |
-| Cloud | Opt-in report adapter with bounded input/output and consent | Fixture-tested, unconfigured; no live provider validation |
+## Field Lab
+One local workbench now runs the real Rapier drone and anchored-arm references with distinct Stone identities, task selection, state-preserving swaps, run/pause/step/Stop, verified command replay, comparisons, camera Home/Focus, Plan fallback, capability passports and core manifest exports. The original rover remains a separately linked workbench, with its physics and rules preserved.
 
-The thirteen Lab passports distinguish execution, host and availability. They are a narrow reference contract, not the complete ecosystem manifest. A compatible description is not hardware certification. ClawSpan integration and trained-policy development remain separate work.
+Digital BENCH and BRIEF run fixed reference benchmarks for all three machine families. New AUDIT accepts a user-selected core manifest or saved drone/arm recording and returns local validation, compatibility, source-byte SHA-256 and, for supported recordings, actual engine reexecution. Imports do not install code or enable services.
 
-## Run locally
+ANALYST and HYBRID are labelled configuration-required. No cloud provider is configured or called by this workbench. HYBRID needs explicit consent to return a local-only result. These current implementations are deterministic rules/tools, not trained-model intelligence. There are fourteen Lab passports, including twelve executable local references.
+
+## Start locally
 Use Node.js 22 or later. From the repository root:
 
 ```sh
 npm --prefix experiments/rover3d ci --ignore-scripts --no-audit --no-fund
 npm --prefix apps/rover ci --ignore-scripts --no-audit --no-fund
-npm run rover
+npm run field
 ```
 
-The existing rover opens at the loopback address printed by the server, normally `http://127.0.0.1:4173/`. Stop with Ctrl+C. After dependency acquisition it requests only local assets. Its rendered body, wheels, suspension and steering come from the same tested Rapier state. Space runs/pauses, 1–3 selects a Stone, Escape stops. Plan and numerical views remain available.
-## Drone and Digital Stone commands
-```sh
-npm run lab -- list
-npm run lab -- benchmark drone hover
-npm run lab -- benchmark drone inspection
-npm run lab -- digital digital.brief drone inspection
-npm run lab -- digital digital.hybrid drone hover --local-fallback
-npm run lab -- cloud-status
-```
-The drone is an original, simplified reference vehicle with four bounded rotor-force commands. No hardware connection or flight-ready controller is supplied. BENCH/BRIEF return real benchmark measurements and deterministic text with `model: null`. A HYBRID fallback is explicitly labelled local-only, not a cloud success. See `docs/DRONE_REFERENCE.md` and `docs/LAB_REFERENCE.md`.
+Open the loopback address printed by the server, normally `http://127.0.0.1:4174/`. To run the original rover as well, use `npm run rover` in a second terminal; its normal address is `http://127.0.0.1:4173/`. Stop each server with Ctrl+C. No public hosting or API account is required. Initial dependency acquisition needs network access; the installed workbenches use local assets only.
 
-## Verification
+Space runs/pauses, 1–3 select a Stone, and Escape stops when focus is outside a native form control. Camera controls never command the machine. Reduced-motion handling, numerical readings and Plan fallback remain available.
+
+## Inspect saved evidence
+Choose Digital > AUDIT and select a UTF-8 JSON file. Core manifests use schema 0.1.0 or 0.2.0; supported recording formats are stone.drone.session/0.2 and stone.humanoid.session/0.2. File size is bounded to 2 MiB; manifests retain the stricter 64 KiB parser bound. Inspection separates valid from compatible and from authenticated/installed. SHA-256 identifies bytes, not trust. See `docs/EVIDENCE_INSPECTION.md`.
+
+Export core manifest is available for reviewed local Stones. It uses the original contract shape, explicitly versioned to v0.2 for multiple hosts and exact machine/engine identities. Unconfigured cloud cards do not fabricate model references. `docs/CORE_MANIFEST.md` describes admission rules and what is still not implemented.
+
+## Verify and use the CLI
 ```sh
 npm run verify:all
+npm run verify:field
 npm run verify:browser
+npm run lab -- benchmark drone inspection
+npm run lab -- digital digital.brief humanoid reach
+npm run lab -- digital digital.hybrid drone hover --local-fallback
 ```
-The browser suite remains the existing rover regression and uses an installed sandbox-capable Google Chrome. It does not claim a new drone or humanoid browser UI. `CHROME_PATH` configures the normal suite; the fault suite targets `/usr/bin/google-chrome`. Browser security policies and sandboxing are not disabled.
 
-Current evidence is in `evidence/DRONE_REFERENCE_V0_1.md`. Earlier rover and arm evidence records remain historical snapshots. Missing dependencies fail verification. Replay agreement is established on the recorded test environment, not guaranteed across every platform.
+`verify:field` includes normal controls, failure handling and file inspection. `verify:browser` preserves the separate rover regression. Tests use an installed sandbox-capable Chrome; `CHROME_PATH` can override the normal/Field Lab executable, while the historical rover fault suite targets `/usr/bin/google-chrome`. No sandbox/security-policy weakening is required. AUDIT is exposed through the browser and module API, not the fixed-benchmark CLI.
 
-## Boundaries
-This public component excludes private project history, coordination records and credentials. The private project consumes an exact accepted commit. The original planar Arena is separate and unchanged. Hosted verification remains manual-only while the account is blocked; no schedules, automatic deployment or paid services are enabled.
+## Scope and evidence
+Rapier 0.20.0 advances all simulation dynamics; Three.js r184 displays their state. Drone motion uses a simplified rigid-body quadrotor, not calibrated aerodynamics or a real aircraft interface. Humanoid means anchored two-joint reaching, not walking, balance or grasping. Fixed targets and benchmark successes are not general robotics competence or physical-safety certification.
 
-Cloud activation requires separate provider, credentials, data and funding approval. Per-process request counters are not monetary or account-wide caps. The unfinished Field Lab browser and shared live-session candidates are not part of this accepted runtime.
+Current milestone evidence is `evidence/FIELD_LAB_V0_1.md`. Earlier evidence files are historical snapshots. Replay agreement is established on the recorded environment, not every platform. Resource declarations are provisional admission requests, not measured performance or enforced memory/timing quotas. Publisher trust, executable third-party loading, trained weights, live cloud acceptance and marketplace integration remain separate work.
 
-Original STONE source remains `UNLICENSED` pending an explicit licence decision. Existing upstream libraries retain their terms; see `THIRD_PARTY.md`. No font files or copied third-party demo artwork are bundled.
+This public component contains reviewed runtime source, not private project history, Drive records or credentials. The private project pins an exact accepted revision. Hosted Actions remain manual-only while unavailable; no schedules, paid inference or automatic/public application deployment are enabled. Original STONE code remains `UNLICENSED` pending an explicit licence choice. Preserve existing upstream terms in `THIRD_PARTY.md`; no font files or copied demo artwork are bundled.

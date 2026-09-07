@@ -1,6 +1,6 @@
 # STONE Lab reference packages
 
-This increment is a Node API/CLI for a simulated drone, an anchored humanoid arm and digital benchmark tools. The existing interactive rover remains unchanged. It is not the complete multi-host browser platform.
+The reference APIs and Field Lab now support a simulated drone, anchored humanoid arm and local Digital Stones. The original rover remains a separately linked application. See CORE_MANIFEST.md for v0.2 metadata and EVIDENCE_INSPECTION.md for AUDIT.
 
 ## Available commands
 After installing the existing pinned rover dependencies, from the repository root:
@@ -18,9 +18,9 @@ node scripts/lab.mjs digital digital.hybrid humanoid reach --local-fallback
 The last command explicitly accepts a local-only result when no provider is configured. Its output declares `execution: hybrid`, `actualExecution: local-only`, `model: null` and `cloud.status: not-configured`. It is not evidence of a cloud call.
 
 ## Package contract and availability
-`packages/lab/registry.mjs` describes thirteen experimental Lab passports. These are a narrow reference contract, not a substitute for the broader STONE manifest standard. Each declares host/profile, version, execution, implementation/model, harness, tools, offline behaviour and limits. `compatible` compares declared host/execution identity only; it does not assert installed implementation or availability.
+`packages/lab/registry.mjs` describes fourteen Lab passports. These are a narrow reference contract, not a substitute for the broader STONE manifest standard. Each declares host/profile, version, execution, implementation/model, harness, tools, offline behaviour and limits. `compatible` compares declared host/execution identity only; it does not assert installed implementation or availability.
 
-Rover, drone and humanoid rules, BENCH and BRIEF are available. CINEMA/SURVEY/AGILE now execute the headless drone reference; see DRONE_REFERENCE.md. ANALYST and HYBRID require cloud configuration for their remote stage. The combined browser and live-session extensions remain unfinished. Metadata alone is not a capability test.
+Rover, drone and humanoid rules, BENCH and BRIEF are available. CINEMA/SURVEY/AGILE now execute the headless drone reference; see DRONE_REFERENCE.md. ANALYST and HYBRID require cloud configuration for their remote stage. The combined browser and shared live-session extensions are implemented; they are still a limited reference, not a universal runtime. Metadata alone is not a capability test.
 
 ## Humanoid scope
 The simulated mechanism has an anchored shoulder, two dynamic arm segments and revolute joints. Three deterministic inverse-kinematics policies vary the target-angle slew rate, not machine limits. Force-based spring motors use identical parameters for every policy. Targets are in a fixed plane. Reach completion requires each of three tip targets to be within 0.04 simulated metres and below 0.12 m/s for 48 ticks at 120 Hz.
@@ -28,7 +28,7 @@ The simulated mechanism has an anchored shoulder, two dynamic arm segments and r
 This is not locomotion, balance, grasping, collision avoidance, torque-budget certification or hardware calibration. The full humanoid silhouette in the proof image is illustrative fixed geometry; only the active arm pose is supplied by the tested physics. Stop freezes simulation progression and is not a physical emergency-stop system.
 
 ## Fixed digital tools
-`benchmark(R, host, task)` runs only reviewed rover, drone or humanoid reference tasks. It retains failed statuses instead of manufacturing successful scores. Humanoid results include sampled physical pose recordings, not a general replay/session protocol. `digitalBenchmark` packages the measurements and a deterministic text summary. BENCH and BRIEF have `model: null` and no trained weights.
+`benchmark(R, host, task)` runs only reviewed rover, drone or humanoid reference tasks. It retains failed statuses instead of manufacturing successful scores. Humanoid results include sampled physical pose recordings, separate from the versioned live-session protocol documented in CONTROL_SESSIONS.md. `digitalBenchmark` packages the measurements and a deterministic text summary. BENCH and BRIEF have `model: null` and no trained weights.
 
 ## Cloud integration boundary
 `createCloudClient` in `packages/lab/cloud.mjs` is a server-side/Node adapter for a compatible chat-completions endpoint. Nothing is configured or called on import. The CLI consults `STONE_CLOUD_CONFIG` only for explicit cloud operations/status. No browser form collects credentials and no HTTP gateway is included.
@@ -40,6 +40,6 @@ An actual remote run additionally requires `--consent`. Only a bounded summary o
 The configured endpoint is trusted operator input. The hostname checks are not network sandboxing or DNS-based SSRF protection. The returned `model` is the requested identifier, not independent verification of provider weights. Fixture tests establish adapter behaviour only; provider compatibility, inference quality, latency, billing and retention have not been validated live.
 
 ## Reproduce evidence
-`npm run verify:all` includes the new Node tests and the unchanged rover checks. `npm run verify:browser` is the existing rover browser regression, not a humanoid-UI claim. `node scripts/render-lab-proof.mjs` uses existing sandboxed Chrome and Three.js to render one recorded humanoid pose; generated files stay in ignored `evidence/lab-proof/`.
+`npm run verify:all` includes the new Node tests and the unchanged rover checks. `npm run verify:field` tests live drone/arm controls, failure handling and evidence inspection. `npm run verify:browser` is the separate rover regression. `node scripts/render-lab-proof.mjs` uses existing sandboxed Chrome and Three.js to render one recorded humanoid pose; generated files stay in ignored `evidence/lab-proof/`.
 
 No ClawSpan changes, paid inference, public app deployment or additional coding agent are part of this increment.

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "0.1.0",
+  "id": "example.hybrid",
+  "name": "Example FLOW",
+  "version": "0.1.0",
+  "publisher": "Example publisher",
+  "license": "UNLICENSED",
+  "task": "arena-navigation",
+  "style": "Reference",
+  "form": "digital",
+  "implementation": {
+    "kind": "model-harness",
+    "modelRef": "example.model@0.1.0"
+  },
+  "compatibility": {
+    "profile": "stone.arena.control/0.1",
+    "inputs": [
+      "position",
+      "velocity",
+      "goal"
+    ],
+    "outputs": [
+      "acceleration"
+    ]
+  },
+  "resources": {
+    "memoryMiB": 32,
+    "decisionBudgetMs": 5
+  },
+  "execution": {
+    "mode": "hybrid",
+    "offlineBehavior": "limited",
+    "offlineDetails": "Illustrative offline-unavailable declaration.",
+    "localCapabilities": [
+      "measure"
+    ],
+    "remoteCapabilities": [
+      "report"
+    ],
+    "dataEgress": [
+      "bounded-summary"
+    ]
+  },
+  "permissions": {
+    "networkOrigins": [
+      "https://provider.example.invalid"
+    ],
+    "tools": [],
+    "storage": "none"
+  },
+  "cost": {
+    "kind": "metered",
+    "payer": "user",
+    "details": "Illustrative pricing category, no configured service."
+  },
+  "lifecycle": {
+    "state": "ephemeral",
+    "updates": "pinned"
+  },
+  "evidence": {
+    "status": "prototype",
+    "summary": "Metadata fixture, not a product.",
+    "references": []
+  }
+}
