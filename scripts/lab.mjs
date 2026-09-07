@@ -10,7 +10,7 @@ try{
  else if(command==='cloud-status'&&args.length===0)out(createCloudClient(config()).status());
  else if(command==='benchmark'&&args.length===2){
   const b=benchmark(await loadRapier(),args[0],args[1]);
-  out({host:b.host,task:b.task,engine:'rapier3d-compat/0.20.0',results:b.results,recordings:b.recordings.length});
+  out({host:b.host,task:b.task,engine:'rapier3d-compat/0.20.0',engineVersion:b.engineVersion,machineVersion:b.machineVersion,taskVersion:b.taskVersion,results:b.results,recordings:b.recordings.length});
  }else if(command==='digital'&&args.length>=3){
   const [id,host,task,...flags]=args;
   if(flags.some(f=>!['--consent','--local-fallback'].includes(f))||new Set(flags).size!==flags.length)throw new Error('Invalid options.');

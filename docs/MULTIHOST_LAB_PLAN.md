@@ -11,8 +11,8 @@ Goal: grow interchangeable expertise beyond the preserved rover, with independen
 - [x] HYBRID explicit local-only fallback, visibly distinct from cloud success.
 - [x] Recorded-pose rendering proof using the existing pinned Three.js and sandboxed Chrome. This is not an interactive humanoid interface.
 
-## Not implemented by this increment
-- [ ] Executable drone host and flight policies. Catalogue entries remain planned.
+## Expansion tracking
+- [x] Executable headless drone host and three reference rules. Two fixed tasks pass; see DRONE_REFERENCE.md. No live drone browser interface is included.
 - [ ] Live humanoid selection/session/replay controls and combined multi-host browser interface.
 - [ ] HTTP gateway for cloud execution. The accepted adapter is a Node module/CLI only.
 - [ ] General uploaded-record audit and learned policies. Do not relabel fixed benchmark templates as model inference.

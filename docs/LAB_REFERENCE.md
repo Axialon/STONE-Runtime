@@ -1,6 +1,6 @@
 # STONE Lab reference packages
 
-This increment is a Node API/CLI for an anchored humanoid arm and digital benchmark tools. The existing interactive rover remains unchanged. It is not the complete multi-host browser platform.
+This increment is a Node API/CLI for a simulated drone, an anchored humanoid arm and digital benchmark tools. The existing interactive rover remains unchanged. It is not the complete multi-host browser platform.
 
 ## Available commands
 After installing the existing pinned rover dependencies, from the repository root:
@@ -20,7 +20,7 @@ The last command explicitly accepts a local-only result when no provider is conf
 ## Package contract and availability
 `packages/lab/registry.mjs` describes thirteen experimental Lab passports. These are a narrow reference contract, not a substitute for the broader STONE manifest standard. Each declares host/profile, version, execution, implementation/model, harness, tools, offline behaviour and limits. `compatible` compares declared host/execution identity only; it does not assert installed implementation or availability.
 
-Rover and humanoid rules, BENCH and BRIEF are available. ANALYST and HYBRID require cloud configuration for their remote stage. CINEMA/SURVEY/AGILE drone entries are planned: no drone engine or controller is installed, and benchmark execution rejects that host. Metadata is not a capability test.
+Rover, drone and humanoid rules, BENCH and BRIEF are available. CINEMA/SURVEY/AGILE now execute the headless drone reference; see DRONE_REFERENCE.md. ANALYST and HYBRID require cloud configuration for their remote stage. The combined browser and live-session extensions remain unfinished. Metadata alone is not a capability test.
 
 ## Humanoid scope
 The simulated mechanism has an anchored shoulder, two dynamic arm segments and revolute joints. Three deterministic inverse-kinematics policies vary the target-angle slew rate, not machine limits. Force-based spring motors use identical parameters for every policy. Targets are in a fixed plane. Reach completion requires each of three tip targets to be within 0.04 simulated metres and below 0.12 m/s for 48 ticks at 120 Hz.
@@ -28,7 +28,7 @@ The simulated mechanism has an anchored shoulder, two dynamic arm segments and r
 This is not locomotion, balance, grasping, collision avoidance, torque-budget certification or hardware calibration. The full humanoid silhouette in the proof image is illustrative fixed geometry; only the active arm pose is supplied by the tested physics. Stop freezes simulation progression and is not a physical emergency-stop system.
 
 ## Fixed digital tools
-`benchmark(R, host, task)` runs only reviewed rover or humanoid reference tasks. It retains failed statuses instead of manufacturing successful scores. Humanoid results include sampled physical pose recordings, not a general replay/session protocol. `digitalBenchmark` packages the measurements and a deterministic text summary. BENCH and BRIEF have `model: null` and no trained weights.
+`benchmark(R, host, task)` runs only reviewed rover, drone or humanoid reference tasks. It retains failed statuses instead of manufacturing successful scores. Humanoid results include sampled physical pose recordings, not a general replay/session protocol. `digitalBenchmark` packages the measurements and a deterministic text summary. BENCH and BRIEF have `model: null` and no trained weights.
 
 ## Cloud integration boundary
 `createCloudClient` in `packages/lab/cloud.mjs` is a server-side/Node adapter for a compatible chat-completions endpoint. Nothing is configured or called on import. The CLI consults `STONE_CLOUD_CONFIG` only for explicit cloud operations/status. No browser form collects credentials and no HTTP gateway is included.

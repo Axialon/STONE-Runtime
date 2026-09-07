@@ -20,6 +20,6 @@ test('cloud/hybrid are explicit, never silently local',()=>{
 });
 test('unknown IDs fail',()=>{for(const id of ['__proto__','unknown',null]){assert.throws(()=>getPackage(id));assert.equal(compatible(id,'drone','local'),false);}});
 
-test('planned drone passports cannot imply executable implementation',()=>{for(const p of PACKAGES.filter(p=>p.host==='drone'))assert.equal(p.availability,'planned');});
+test('drone passports describe the verified simulation as available rules',()=>{for(const p of PACKAGES.filter(p=>p.host==='drone')){assert.equal(p.availability,'available');assert.equal(p.implementation,'rule-based');assert.match(p.limits,/simulated/);}});
 
 test('no planned package claims offline implementation',()=>{for(const p of PACKAGES.filter(p=>p.availability==='planned'))assert.equal(p.offline,'not-implemented');});

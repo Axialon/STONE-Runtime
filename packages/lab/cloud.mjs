@@ -14,7 +14,7 @@ export function createCloudClient(configuration,{fetchImpl=globalThis.fetch,time
   if(!config)throw new Error('Cloud is not configured.');
   if(consent!==true)throw new Error('Explicit data-transfer consent is required.');
   if(busy||requests>=config.maxRequests)throw new Error('Cloud request allowance unavailable.');
-  if(!fields(report,['format','task','summary'])||report.format!=='stone.benchmark/0.1'||!['rover-reference','humanoid-reference'].includes(report.task)||typeof report.summary!=='string'||report.summary.length>6000)throw new TypeError('Only a bounded benchmark summary may be sent.');
+  if(!fields(report,['format','task','summary'])||report.format!=='stone.benchmark/0.1'||!['rover-reference','humanoid-reference','drone-reference'].includes(report.task)||typeof report.summary!=='string'||report.summary.length>6000)throw new TypeError('Only a bounded benchmark summary may be sent.');
   busy=true;requests++;const controller=new AbortController();let timer;
   const deadline=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new Error('Cloud deadline exceeded.'));},timeoutMs);});
   try{return await Promise.race([deadline,(async()=>{
