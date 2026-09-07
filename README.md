@@ -3,17 +3,18 @@ Public Stone Repo
 
 **Interchangeable expertise for machines and digital systems.**
 
-## New reference SDK: humanoid and digital Stones
-The component now includes an actual anchored two-joint arm benchmark, three rule-based reach styles, local digital BENCH/BRIEF packages, and a configured-provider cloud/hybrid report adapter. No live cloud provider has been called; drone entries remain planned. Run `npm run lab -- list` or read `docs/LAB_REFERENCE.md`. This is backend/CLI expansion, not a new combined browser release. The existing rover below is preserved.
+## Current reference capabilities
+| Family | Working capability | Boundary |
+| --- | --- | --- |
+| Rover | Interactive Three.js/Rapier workbench, three rules, swaps, replay and comparisons | Two fixed lanes; not calibrated hardware |
+| Drone | Real rigid-body simulation, CINEMA/SURVEY/AGILE rules, two tasks, benchmark and action-replay checks | Headless API/CLI; no live drone UI or aircraft interface |
+| Humanoid | Anchored two-joint arm, three rules, two reach tasks and sampled pose benchmarking | No walking, full-body balance or grasping; no live arm UI yet |
+| Digital | BENCH/BRIEF local reference tools; explicit HYBRID local-only fallback | Deterministic summaries, not trained inference |
+| Cloud | Opt-in report adapter with bounded input/output and consent | Fixture-tested, unconfigured; no live provider validation |
 
-## Rover proving ground
-A local, working 3D STONE reference experience. Select FLOW, DART or ANCHOR Rover, run either fixed course, change the controller without replacing the machine, stop, inspect recorded frames and verify an engine replay. Compare measured trade-offs under identical hardware limits. Export the recording, comparison and capability passport as JSON.
+The thirteen Lab passports distinguish execution, host and availability. They are a narrow reference contract, not the complete ecosystem manifest. A compatible description is not hardware certification. ClawSpan integration and trained-policy development remain separate work.
 
-The rover uses the actual Rapier 0.20.0 physics engine. Three.js r184 renders its body pose, suspension, steering and wheel rotation. The Plan view and numerical values remain available when graphics fail. Controls: Space run/pause, 1–3 select a Stone, Escape stop. Camera orbit/zoom and the Rover follow view never control the vehicle.
-
-These three first-party Stones are **rule-based prototypes**, not trained models, universal obstacle-avoidance systems or hardware-calibrated controllers. The two fixed lanes are a reference task, not proof of broad robot competence. No cloud service, API key, public hosting or second AI agent is involved in the running application.
-
-## Start locally
+## Run locally
 Use Node.js 22 or later. From the repository root:
 
 ```sh
@@ -22,20 +23,30 @@ npm --prefix apps/rover ci --ignore-scripts --no-audit --no-fund
 npm run rover
 ```
 
-Open the loopback address printed by the server, normally `http://127.0.0.1:4173/`. Stop with Ctrl+C. The runtime requests only its own local assets; internet is needed for the initial dependency acquisition, not the experience. Use the committed locks. No install lifecycle scripts are needed.
+The existing rover opens at the loopback address printed by the server, normally `http://127.0.0.1:4173/`. Stop with Ctrl+C. After dependency acquisition it requests only local assets. Its rendered body, wheels, suspension and steering come from the same tested Rapier state. Space runs/pauses, 1–3 selects a Stone, Escape stops. Plan and numerical views remain available.
+## Drone and Digital Stone commands
+```sh
+npm run lab -- list
+npm run lab -- benchmark drone hover
+npm run lab -- benchmark drone inspection
+npm run lab -- digital digital.brief drone inspection
+npm run lab -- digital digital.hybrid drone hover --local-fallback
+npm run lab -- cloud-status
+```
+The drone is an original, simplified reference vehicle with four bounded rotor-force commands. No hardware connection or flight-ready controller is supplied. BENCH/BRIEF return real benchmark measurements and deterministic text with `model: null`. A HYBRID fallback is explicitly labelled local-only, not a cloud success. See `docs/DRONE_REFERENCE.md` and `docs/LAB_REFERENCE.md`.
 
-## Verify and compare
+## Verification
 ```sh
 npm run verify:all
 npm run verify:browser
-npm run compare
 ```
+The browser suite remains the existing rover regression and uses an installed sandbox-capable Google Chrome. It does not claim a new drone or humanoid browser UI. `CHROME_PATH` configures the normal suite; the fault suite targets `/usr/bin/google-chrome`. Browser security policies and sandboxing are not disabled.
 
-The browser suite uses an existing sandbox-capable Google Chrome installation. Set `CHROME_PATH` for the main browser suite when necessary; the fault suite currently targets `/usr/bin/google-chrome`. No browser security policy or sandbox is disabled by these tests. Evidence names the tested environment and limits.
-
-See `evidence/ROVER_WORKBENCH_V0_1.md` for current results and `evidence/rover-comparison.json` for the measured reference runs. Missing dependencies fail verification; no substitute physics or skipped-pass result is used. Headless and browser comparison outputs agree exactly on the tested Linux/Node/Chrome environment. This is not a cross-platform determinism guarantee.
+Current evidence is in `evidence/DRONE_REFERENCE_V0_1.md`. Earlier rover and arm evidence records remain historical snapshots. Missing dependencies fail verification. Replay agreement is established on the recorded test environment, not guaranteed across every platform.
 
 ## Boundaries
-This public repository contains reviewed runtime source and evidence, not internal coordination documents or private Git history. `snapshot.json` records selected source hashes. The planar Arena is a separate unchanged reference application. Hosted verification is manual-only and must not be retried while unavailable. No schedules, paid runners, deployment credentials, automatic publication or public application deployment are enabled.
+This public component excludes private project history, coordination records and credentials. The private project consumes an exact accepted commit. The original planar Arena is separate and unchanged. Hosted verification remains manual-only while the account is blocked; no schedules, automatic deployment or paid services are enabled.
 
-Original STONE code remains `UNLICENSED` pending an explicit licence decision. Upstream libraries keep their own terms; see `THIRD_PARTY.md`. No font files, copied demo art or external models are bundled.
+Cloud activation requires separate provider, credentials, data and funding approval. Per-process request counters are not monetary or account-wide caps. The unfinished Field Lab browser and shared live-session candidates are not part of this accepted runtime.
+
+Original STONE source remains `UNLICENSED` pending an explicit licence decision. Existing upstream libraries retain their terms; see `THIRD_PARTY.md`. No font files or copied third-party demo artwork are bundled.
