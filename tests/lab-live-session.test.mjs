@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {loadRapier} from '../experiments/rover3d/engine.mjs';
+import {createHumanoidSession,replayHumanoidSession} from '../packages/lab/humanoid-session.mjs';
+const R=await loadRapier();
+function use(fn){const s=createHumanoidSession(R,'reach','humanoid.fluid');try{return fn(s);}finally{s.dispose();}}
+test('live arm advances actual joint state in bounded batches',()=>use(s=>{const before=s.read();const r=s.advance(24);assert.equal(r.frames.length,24);assert.equal(r.state.frame.tick,24);assert.notDeepEqual(r.state.frame.tip,before.frame.tip);}));
+for(const n of [0,-1,25,1.2,NaN])test('invalid batch '+n+' cannot mutate host',()=>use(s=>{const before=s.read();assert.throws(()=>s.advance(n));assert.deepEqual(s.read(),before);}));
+test('swap retains pose and time and changes only next decisions',()=>use(s=>{s.advance(24);const before=s.read();s.select('humanoid.brisk');assert.deepEqual(s.read().frame,before.frame);assert.equal(s.read().stoneId,'humanoid.brisk');const f=s.advance(1).frames[0];assert.equal(f.stoneId,'humanoid.brisk');assert.equal(f.frame.tick,25);}));
+test('other-host and missing package cannot be installed',()=>use(s=>{const before=s.read();for(const id of ['drone.agile','digital.brief','bad'])assert.throws(()=>s.select(id));assert.deepEqual(s.read(),before);}));
+test('recorded commands and package attribution replay after disposal',()=>{const s=createHumanoidSession(R,'reach','humanoid.fluid');s.advance(24);s.select('humanoid.precise');s.advance(24);const last=s.read(),tape=s.export();s.dispose();const r=replayHumanoidSession(R,JSON.stringify(tape));assert.deepEqual(r.frames.at(-1).frame,last.frame);assert.equal(r.frames[30].stoneId,'humanoid.precise');assert.equal(r.frames.length,49);});
+test('replay rejects malformed, oversized and incompatible recordings',()=>{for(const text of ['null','{}','bad','x'.repeat(800001)])assert.throws(()=>replayHumanoidSession(R,text));use(s=>{const d=structuredClone(s.export());d.machineVersion='other';assert.throws(()=>replayHumanoidSession(R,JSON.stringify(d)));});});
+test('Stop freezes and disposal is idempotent',()=>use(s=>{s.advance(1);const last=s.stop();assert.equal(last.frame.status,'stopped');assert.equal(s.advance(1).frames.length,0);s.dispose();s.dispose();assert.throws(()=>s.advance(1));}));
+test('export after an explicit session stop preserves terminal replay status',()=>use(s=>{s.advance(4);const stopped=s.stop();const replay=replayHumanoidSession(R,JSON.stringify(s.export()));assert.deepEqual(replay.frames.at(-1).frame,stopped.frame);}));
