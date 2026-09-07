@@ -10,7 +10,6 @@ export const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 export const protocolSha256 = 'ee6f721ca0cd79788efb0023f89a322913181703b5ddb56ab33bbe56bbe978e1';
 const protocolBytes = readFileSync(new URL('./protocol.json', import.meta.url));
 if (sha256(protocolBytes) !== protocolSha256) throw new Error('Frozen protocol digest mismatch.');
-export const PROTOCOL = freeze(JSON.parse(protocolBytes.toString('utf8')));
 const P = PROTOCOL;
 const require = createRequire(import.meta.url);
 export const LIBRARY_ENTRY = require.resolve('ml-cart');
@@ -34,11 +33,7 @@ const {DecisionTreeRegression} = require('ml-cart');
 if (typeof DecisionTreeRegression !== 'function' || typeof DecisionTreeRegression.load !== 'function')
   throw new Error('Expected scalar regression API is unavailable.');
 
-const LIMIT = 1048576;
-const MAX_ROWS = 20000;
-const OPTIONS = Object.freeze({...P.modelOptions, kind: 'regression'});
 const ownedModels = new WeakMap();
-const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
 const fail = message => { throw new TypeError(message); };
 function exactKeys(value, keys) {
   if (!value || typeof value !== 'object' || Array.isArray(value) ||
@@ -222,13 +217,7 @@ export function loadArtifact(text, expectedSha) {
   if (typeof text !== 'string' || text.length > LIMIT || Buffer.byteLength(text, 'utf8') > LIMIT ||
       typeof expectedSha !== 'string' || !/^[a-f0-9]{64}$/.test(expectedSha) || sha256(text) !== expectedSha)
     fail('Artifact size or source-byte digest mismatch.');
-  const value = JSON.parse(text);
-  if (!exactKeys(value, ['format', 'protocolSha256', 'library', 'harnessVersion', 'engine', 'teacher', 'meta', 'tree']) ||
-      value.format !== 'stone.learned-flow/0.1' || value.protocolSha256 !== protocolSha256 ||
-      value.library !== P.library || value.harnessVersion !== P.harnessVersion ||
-      value.engine !== P.engine || value.teacher !== P.teacher) fail('Incompatible artifact identity.');
-  validateMetadata(value.meta);
-  validateTree(value.tree);
+  const value = decodeArtifact(text);
   // expectedSha is supplied by the caller; identity fields are compatibility checks,
   // not signatures or evidence of authorship. JSON cannot select an executable import.
   const model = DecisionTreeRegression.load(value.tree);

@@ -1,0 +1,11 @@
+# Unfinished browser integration — do not merge
+
+Parent a2aeae7 is the accepted fitted offline model. This branch is a preservation checkpoint, not a working browser extension or passing learned suite. No model bytes, frozen protocol, teacher, physics or original browser app have changed.
+
+The opt-in model-enabled session design is in LEARNED_BROWSER_PLAN.md. Sixteen first-written portable-loader tests ran against explicit throw-only scaffolds: six positive/stream-bound tests failed and ten rejection cases passed. An extraction/loader implementation call initially returned indeterminate tool safety status; an identical retry executed, but two Python REPL compound-statement syntax errors left the extraction incomplete. The current policy.mjs lacks the copied functions; experiment.mjs consequently lacks its intended PROTOCOL import. The attempted corrective extraction (from exact accepted HEAD) returned indeterminate safety status twice, including one identical retry, and did not execute. Do not reroute a denied operation or disable safety settings.
+
+Current learned test command fails module initialization; it is not green. The policy, loader and metadata here are unverified source. The original accepted model remains byte-identical. No bundler was installed or bundle produced: only esbuild-wasm0.28.2 package metadata was inspected. No fourth Stone, new session format or browser model worker/UI is implemented.
+
+Next permitted execution: reconstruct the pure policy extraction from accepted a2aeae7 experiment.mjs, keeping the exact feature/harness/tree-validation functions shared, restore the Node imports, then rerun all prior42 experiment tests plus16 new loader cases. Do not change model/protocol hashes, retrain or tune. Use syntactically complete Python scripts or explicit blank lines between REPL compound statements. Continue the written model-session/worker/UI plan only after the pure boundary is verified.
+
+No accepted source merge, additional dependency, inference service, spending, physical operation or deployment is implied by this draft. Snapshot.json remains the accepted parent's snapshot, not proof of these draft changes. The local accepted branch is restored separately so the usable workbench/model stay available. Refer to live issue37 and the accepted PR8 for actual delivered scope.
