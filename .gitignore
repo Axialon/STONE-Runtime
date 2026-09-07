@@ -8,3 +8,5 @@ evidence/browser-local/
 *.log
 
 evidence/lab-proof/
+
+evidence/field-local/

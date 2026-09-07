@@ -15,6 +15,8 @@
     "rover": "node apps/rover/server.mjs",
     "compare": "node experiments/rover3d/compare.mjs",
     "lab": "node scripts/lab.mjs",
-    "lab:render": "node scripts/render-lab-proof.mjs"
+    "lab:render": "node scripts/render-lab-proof.mjs",
+    "field": "node apps/field-lab/server.mjs",
+    "verify:field": "node apps/field-lab/browser.test.mjs && node apps/field-lab/faults.test.mjs"
   }
 }

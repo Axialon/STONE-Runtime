@@ -1,0 +1,1 @@
+import('./app.mjs').catch(()=>{document.body.dataset.ready='false';const e=document.querySelector('#error');e.hidden=false;e.textContent='The local Field Lab could not start. Check the pinned dependencies and reload.';});
