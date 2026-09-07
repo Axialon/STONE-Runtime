@@ -10,7 +10,8 @@ const CSP=`default-src 'none'; script-src 'self' 'sha256-${digest}' 'wasm-unsafe
 const assets=new Map();
 for(const f of ['index.html','style.css','boot.mjs','app.mjs','scene.mjs','worker.mjs'])assets.set('/'+f,new URL(f,here));
 assets.set('/client.mjs',new URL('apps/rover/client.mjs',root));
-for(const f of ['common.mjs','registry.mjs','humanoid.mjs','humanoid-session.mjs','drone.mjs','drone-session.mjs','control-session.mjs','benchmark.mjs'])assets.set('/packages/lab/'+f,new URL('packages/lab/'+f,root));
+for(const f of ['manifest.mjs','compatibility.mjs','reference.mjs'])assets.set('/packages/contract/'+f,new URL('packages/contract/'+f,root));
+for(const f of ['common.mjs','registry.mjs','humanoid.mjs','humanoid-session.mjs','drone.mjs','drone-session.mjs','control-session.mjs','benchmark.mjs','inspection.mjs','file-input.mjs'])assets.set('/packages/lab/'+f,new URL('packages/lab/'+f,root));
 for(const f of ['contract.mjs','world.mjs','stones.mjs','session.mjs'])assets.set('/experiments/rover3d/'+f,new URL('experiments/rover3d/'+f,root));
 for(const [route,path] of [
  ['rapier.mjs','experiments/rover3d/node_modules/@dimforge/rapier3d-compat/dist/rapier.mjs'],

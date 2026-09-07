@@ -13,7 +13,8 @@ export const PACKAGES=freeze([
  entry('drone','cinema','CINEMA','Moderate acceleration between fixed waypoints.'),entry('drone','survey','SURVEY','Slower waypoint approach and settling.'),entry('drone','agile','AGILE','Faster waypoint transitions.'),
  entry('humanoid','fluid','FLUID','Gradual reaching movements.'),entry('humanoid','precise','PRECISE','Slow, deliberate reaching.'),entry('humanoid','brisk','BRISK','Quicker target transitions.'),
  entry('digital','compare','BENCH','Run fixed rover, drone or humanoid reference benchmarks.'),entry('digital','brief','BRIEF','Produce an evidence-first local digest.'),
- entry('digital','analyst','ANALYST','Configured-provider report; no live provider is connected by default.','cloud'),entry('digital','hybrid','HYBRID','Local benchmark plus optional cloud report; explicit local-only fallback.','hybrid')
+ entry('digital','analyst','ANALYST','Configured-provider report; no live provider is connected by default.','cloud'),entry('digital','hybrid','HYBRID','Local benchmark plus optional cloud report; explicit local-only fallback.','hybrid'),
+ {...entry('digital','audit','AUDIT','Inspect a core manifest or verify a saved simulation.'),profile:'stone.digital.evidence/0.1',harness:'Validate bounded JSON metadata or reexecute an admitted recording in an isolated simulation.',tools:['validate-manifest','replay-reviewed-session'],limits:'Data-only inspection. Compatibility and command reexecution do not verify publisher identity, model weights or hardware safety.'}
 ]);
 export function getPackage(id){const p=PACKAGES.find(p=>p.id===id);if(!p)throw new TypeError('Unknown Stone package.');return p;}
 export function compatible(id,host,execution){try{const p=getPackage(id);return p.host===host&&p.execution===execution;}catch{return false;}}

@@ -52,7 +52,8 @@ export function createView(element,plan){
  }
  function paint(){if(mode==='plan')drawPlan();else if(renderer&&healthy)renderer.render(scene,camera);}
  function setMode(value){mode=value==='3d'&&renderer&&healthy?'3d':'plan';element.hidden=mode==='plan';plan.hidden=mode!=='plan';paint();return mode;}
- function home(){const drone=current?.frame.host==='drone';camera.position.set(...(drone?[4.5,4.5,6.5]:[2.8,2.1,3.7]));const t=drone?[.35,1.25,.35]:[0,1.15,.18];camera.lookAt(...t);controls?.target.set(...t);controls?.update();paint();}
+ function focus(){const drone=current?.frame.host==='drone',p=drone?current.frame.position:{x:0,y:1.2,z:.16},d=drone?[1.15,.85,1.6]:[1.9,1.05,2.5];camera.position.set(p.x+d[0],p.y+d[1],p.z+d[2]);camera.lookAt(p.x,p.y,p.z);controls?.target.set(p.x,p.y,p.z);controls?.update();paint();}
+ function home(){const drone=current?.frame.host==='drone';camera.position.set(...(drone?[3.2,3.3,4.8]:[2.8,2.1,3.7]));const t=drone?[.35,1.25,.35]:[0,1.15,.18];camera.lookAt(...t);controls?.target.set(...t);controls?.update();paint();}
  try{
   renderer=new T.WebGLRenderer({antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.toneMapping=T.ACESFilmicToneMapping;element.append(renderer.domElement);
   controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;controls.target.set(0,1.15,.18);controls.minDistance=1.2;controls.maxDistance=9;controls.maxPolarAngle=Math.PI*.49;controls.listenToKeyEvents(element);controls.addEventListener('change',paint);
@@ -74,6 +75,6 @@ export function createView(element,plan){
   geometry.setDrawRange(0,count);geometry.attributes.position.needsUpdate=true;geometry.attributes.color.needsUpdate=true;paint();
  }
  home();setMode(mode);resize();
- return Object.freeze({get supported(){return !!renderer&&healthy;},update,home,setMode,
+ return Object.freeze({get supported(){return !!renderer&&healthy;},update,home,focus,setMode,
   dispose(){observer.disconnect();controls?.dispose();clear(fixed);clear(active);clear(targets);clear(airfield);clear(airframe);geometry.dispose();trail.material.dispose();renderer?.dispose();}});
 }

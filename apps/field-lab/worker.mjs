@@ -2,6 +2,7 @@ import R from '/vendor/rapier.mjs';
 import {createHumanoidSession,replayHumanoidSession} from '/packages/lab/humanoid-session.mjs';
 import {createDroneSession,replayDroneSession} from '/packages/lab/drone-session.mjs';
 import {benchmark,digitalBenchmark} from '/packages/lab/benchmark.mjs';
+import {inspectStoneData} from '/packages/lab/inspection.mjs';
 import {fields} from '/packages/lab/common.mjs';
 const ready=R.init();let session=null,busy=false;
 self.onmessage=async({data:m})=>{
@@ -10,7 +11,8 @@ self.onmessage=async({data:m})=>{
  try{
   await ready;if(R.version()!=='0.20.0')throw new Error('Engine mismatch.');
   const p=m.payload;let result;
-  if(m.type==='start'&&fields(p,['host','task','stoneId'])&&['humanoid','drone'].includes(p.host)){
+  if(m.type==='inspect'&&fields(p,['text','target']))result=await inspectStoneData(R,p.text,p.target);
+  else if(m.type==='start'&&fields(p,['host','task','stoneId'])&&['humanoid','drone'].includes(p.host)){
    const create=p.host==='drone'?createDroneSession:createHumanoidSession,next=create(R,p.task,p.stoneId);session?.dispose();session=next;
    result={state:session.read(),recording:session.export()};
   }else if(m.type==='replay'&&fields(p,['host','recording'])&&['humanoid','drone'].includes(p.host))result=(p.host==='drone'?replayDroneSession:replayHumanoidSession)(R,p.recording);

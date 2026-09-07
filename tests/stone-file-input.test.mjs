@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {readStoneFile} from '../packages/lab/file-input.mjs';
+import {MAX_EVIDENCE_BYTES} from '../packages/lab/inspection.mjs';
+import {createClient} from '../apps/rover/client.mjs';
+test('native file bytes are decoded without text normalization',async()=>{const text='{"name":"Żółw"}';assert.equal(await readStoneFile(new File([text],'test.json')),text);});
+test('UTF8 BOM is retained for strict JSON rejection rather than silently changing the digest',async()=>assert.equal((await readStoneFile(new File([new Uint8Array([239,187,191,123,125])],'bom.json'))).charCodeAt(0),65279));
+test('invalid UTF8 is rejected instead of replacement decoding',async()=>await assert.rejects(readStoneFile(new File([new Uint8Array([255])],'bad.json'))));
+test('oversize input is rejected before any arrayBuffer read',async()=>{let read=false;await assert.rejects(readStoneFile({size:MAX_EVIDENCE_BYTES+1,arrayBuffer(){read=true;return new ArrayBuffer(0);}}));assert.equal(read,false);});
+test('invalid file metadata is rejected',async()=>{for(const file of [null,{}, {size:-1}, {size:NaN}])await assert.rejects(readStoneFile(file));});
+test('shared transport permits bounded inspect operation while worker retains admission authority',async()=>{let sent;const w={postMessage(m){sent=m;queueMicrotask(()=>w.onmessage({data:{id:m.id,ok:true,result:{kind:'manifest'}}}));},terminate(){}};const c=createClient(()=>w);try{assert.deepEqual(await c.request('inspect',{text:'{}',target:'auto'}),{kind:'manifest'});assert.equal(sent.type,'inspect');}finally{c.close();}});

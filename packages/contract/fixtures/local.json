@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "0.1.0",
+  "id": "example.flow",
+  "name": "Example FLOW",
+  "version": "0.1.0",
+  "publisher": "Example publisher",
+  "license": "UNLICENSED",
+  "task": "arena-navigation",
+  "style": "Reference",
+  "form": "digital",
+  "implementation": {
+    "kind": "rule-based",
+    "modelRef": null
+  },
+  "compatibility": {
+    "profile": "stone.arena.control/0.1",
+    "inputs": [
+      "position",
+      "velocity",
+      "goal"
+    ],
+    "outputs": [
+      "acceleration"
+    ]
+  },
+  "resources": {
+    "memoryMiB": 32,
+    "decisionBudgetMs": 5
+  },
+  "execution": {
+    "mode": "local",
+    "offlineBehavior": "full",
+    "offlineDetails": "Illustrative declaration only.",
+    "localCapabilities": [
+      "navigation"
+    ],
+    "remoteCapabilities": [],
+    "dataEgress": []
+  },
+  "permissions": {
+    "networkOrigins": [],
+    "tools": [],
+    "storage": "none"
+  },
+  "cost": {
+    "kind": "none",
+    "payer": "none",
+    "details": "No execution service charge declared."
+  },
+  "lifecycle": {
+    "state": "ephemeral",
+    "updates": "pinned"
+  },
+  "evidence": {
+    "status": "prototype",
+    "summary": "Metadata fixture, not a product.",
+    "references": []
+  }
+}

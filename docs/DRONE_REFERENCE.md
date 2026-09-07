@@ -1,6 +1,6 @@
 # Drone reference v0.1
 
-This component now supports a headless simulated quadrotor, alongside the preserved rover and anchored-arm references. It does not add a live drone browser interface or physical aircraft support.
+This component supports a simulated quadrotor through the API/CLI and the live Field Lab, alongside rover and anchored-arm references. No physical aircraft support is included.
 
 ## Model and task boundary
 Rapier 0.20.0 advances one dynamic rigid body with gravity, ground contact, linear/angular damping, four offset thrust forces and a simplified alternating yaw moment. The machine is fixed at 1.4 simulated kg, four 9 N maximum rotor forces, 0.23 m arm offsets and a 120 Hz timestep. No controller can replace those parameters through its action input. There is no aerodynamic calibration, motor lag, battery model, wind model, obstacle avoidance, radio, hardware driver or flight certification.
@@ -19,6 +19,6 @@ node scripts/lab.mjs digital digital.hybrid drone hover --local-fallback
 
 The CLI emits engine, machine and task versions. BENCH and BRIEF run local simulation tools and produce deterministic summaries with `model: null`. Explicit HYBRID fallback reports `actualExecution: local-only`. The cloud adapter accepts a bounded fixed drone-benchmark summary, but is unconfigured by default and has only fixture coverage. No live cloud inference occurred.
 
-Recordings returned by the benchmark API are sampled engine states, not a completed live-session API. Source action replay is tested by re-executing the same rotor commands in a new world. Drone/humanoid cross-host installation is rejected by their controller contracts. Metadata compatibility alone is not certification.
+Recordings returned by the benchmark API are sampled engine states, separate from the completed versioned live-session API. Source action replay is tested by re-executing the same rotor commands in a new world. Drone/humanoid cross-host installation is rejected by their controller contracts. Metadata compatibility alone is not certification.
 
-See `evidence/DRONE_REFERENCE_V0_1.md` for accepted verification scope. The unfinished shared live-session and Field Lab UI work is not part of this increment. The standalone rover browser remains unchanged. ClawSpan, trained models and live-provider activation are separate work.
+See `evidence/DRONE_REFERENCE_V0_1.md` for accepted verification scope. Shared sessions and Field Lab controls are now documented in CONTROL_SESSIONS.md and the root README. The standalone rover browser remains unchanged. ClawSpan, trained models and live-provider activation are separate work.

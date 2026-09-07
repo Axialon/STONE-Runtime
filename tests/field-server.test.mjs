@@ -22,3 +22,5 @@ test('POST and foreign origin cannot use the read-only lab server',async()=>{
 test('forged Host is rejected in a real HTTP request',async()=>{
   const status=await new Promise((resolve,reject)=>{const r=request(server.url,{headers:{Host:'untrusted.invalid'}},res=>{res.resume();resolve(res.statusCode);});r.on('error',reject);r.end();});assert.equal(status,403);
 });
+
+test('served interface has no obsolete planned-drone claim',async()=>{const html=await (await fetch(server.url)).text();assert.ok(!html.includes('An executable flight host is not installed'));});

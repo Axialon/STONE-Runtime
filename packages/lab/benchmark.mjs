@@ -25,7 +25,7 @@ export function benchmark(R,host,task){
  return freeze({host,task,engineVersion:'0.20.0',machineVersion:machine.version,taskVersion:'0.1.0',results,recordings});
 }
 export async function digitalBenchmark(R,id,host,task,{cloud=null,consent=false,allowLocalFallback=false}={}){
- const p=getPackage(id);if(p.host!=='digital')throw new TypeError('Digital package required.');
+ const p=getPackage(id);if(p.host!=='digital'||id==='digital.audit')throw new TypeError('A fixed-benchmark Digital Stone is required.');
  const connected=cloud?.status().configured===true;
  if(p.execution!=='local'&&!connected&&!(p.execution==='hybrid'&&allowLocalFallback===true))throw new Error('Cloud service is not configured.');
  if(p.execution!=='local'&&connected&&consent!==true)throw new Error('Data-transfer consent is required.');
