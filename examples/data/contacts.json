@@ -1,0 +1,6 @@
+[
+  {"id":"001","name":" Ada North ","email":"ada@example.invalid","stock":12},
+  {"id":"002","name":"River, Lee","email":"river@example.invalid","stock":null},
+  {"id":"002","name":"River, Lee","email":"river@example.invalid","stock":null},
+  {"id":"003","name":"Example","email":"<inert text>","stock":"unknown"}
+]

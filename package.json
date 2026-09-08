@@ -25,7 +25,10 @@
     "build:models": "node tools/model-bundle/build.mjs",
     "verify:model-build": "node --test tools/model-bundle/build.test.mjs tools/model-bundle/server.test.mjs && node tools/model-bundle/build.mjs --check",
     "verify:models:browser": "node apps/rover/tests/model-browser.mjs && node apps/rover/tests/model-faults.mjs && node apps/rover/tests/model-inspection-browser.mjs && node apps/rover/tests/model-review-regressions.mjs && node apps/rover/tests/model-lifecycle.mjs",
-    "verify:full": "npm run verify:all && npm run verify:learned && npm run verify:model-build && npm run verify:field && npm run verify:browser && npm run verify:routes && npm run verify:learned:browser && npm run verify:models:browser && npm run verify:packages:browser",
-    "verify:packages:browser": "node apps/rover/tests/stone-package-browser.mjs && node apps/shared/stone-package-audit.browser.mjs && node apps/shared/stone-package-faults.browser.mjs"
+    "verify:full": "npm run verify:all && npm run verify:learned && npm run verify:model-build && npm run verify:field && npm run verify:browser && npm run verify:routes && npm run verify:learned:browser && npm run verify:models:browser && npm run verify:packages:browser && npm run verify:data && node packages/data-quality/build.mjs --check && npm run verify:data:browser",
+    "verify:packages:browser": "node apps/rover/tests/stone-package-browser.mjs && node apps/shared/stone-package-audit.browser.mjs && node apps/shared/stone-package-faults.browser.mjs",
+    "build:data": "node packages/data-quality/build.mjs",
+    "verify:data": "node packages/data-quality/build.mjs --review && node packages/data-quality/tests/data.test.mjs && node packages/data-quality/tests/session.test.mjs && node packages/data-quality/tests/integration.test.mjs && node packages/data-quality/tests/corrections.test.mjs && node packages/data-quality/tests/product.test.mjs",
+    "verify:data:browser": "node apps/data-lab/browser.test.mjs && node apps/data-lab/product.browser.mjs"
   }
 }
