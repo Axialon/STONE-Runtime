@@ -67,3 +67,9 @@ See docs/LIVE_MODEL_STONES.md for commands, formats, setup and limitations. The 
 ## Portable Stone files
 
 The reviewed FLOW model can now be saved, locally inspected and explicitly activated from a Stone JSON data file, using the existing compatible runtime. In Rover open **Portable Stone**, select `examples/FLOW-Learned.stone.json`, inspect its receipt and select **Activate inspected Stone & reset**. Digital AUDIT can inspect the same package without running inference. See docs/STONE_FILES.md and evidence/PORTABLE_STONES_V0_1.md. This is bounded reviewed-model exchange, not third-party code installation or publisher authentication.
+
+## Data Lab — useful Digital Stones
+
+Open Digital in Field Lab for local CSV/JSON inspection. LENS reports data-quality findings; TIDY proposes reversible edge trimming/empty-row omission while preserving the original. Create, inspect, export and explicitly activate a third declarative Data Stone through the same preinstalled adapter—no new card-specific runtime code. Data, policy receipts and normalized JSON exports stay local. See docs/DATA_STONES.md and evidence/DATA_STONES_V0_1.md.
+
+This adds one separately locked Papa Parse5.5.3 dependency (MIT). Install `packages/data-quality` with scripts disabled, run `npm run build:data`, then the existing `npm start`. `npm run verify:full` includes the new data checks. Robotics/model routes and the original four dependency locks remain unchanged.

@@ -1,3 +1,6 @@
+import {mountDataLab} from '/data-lab/app.mjs';
+import {WorkerClient as DataWorkerClient} from '/data-lab/session.mjs';
+import {usesDataAdapter} from '/packages/data-quality/dispatch.mjs';
 import {createNavigation,hostFromHash} from '/shared/navigation.mjs';
 import {createRouteEditor} from '/shared/route-editor.mjs';
 import {manifestFor} from '/packages/contract/reference.mjs';
@@ -6,6 +9,7 @@ import {createView} from './scene.mjs';
 import {createClient} from './client.mjs';
 import {getPackage,packagesFor} from '/packages/lab/registry.mjs';
 const $=id=>document.getElementById(id),text=(id,value)=>{$(id).textContent=String(value);};
+const dataLab=mountDataLab($('data-lab')),dataAudit=new DataWorkerClient();
 const view=createView($('viewport'),$('plan'));
 let host='humanoid',selected='humanoid.fluid',desired=selected,phase='loading',busy=false,generation=0,client=null;
 let current=null,history=[],actions=[],template=null,result=null,replayPrior='paused',replayIndex=0,lastTime=0,accumulator=0,raf;
@@ -16,7 +20,7 @@ function configureTask(){const old=$('task').querySelector('[value="custom-route
 const physical=()=>host==='humanoid'||host==='drone';
 const error=message=>{$('error').hidden=false;text('error',message);};
 const hideError=()=>{$('error').hidden=true;};
-function terminate(){generation++;client?.close();client=null;busy=false;}
+function terminate(){generation++;dataAudit.cancel();client?.close();client=null;busy=false;}
 function getClient(){return client??=createClient();}
 function validState(s){if(!s||s.frame?.host!==host||s.frame?.profile!==getPackage(s.stoneId).profile||!Number.isSafeInteger(s.frame.tick)||s.frame.tick<0||s.frame.tick>7200||!Number.isFinite(s.frame.seconds))throw new Error('Invalid worker state.');return s;}
 function passport(){const p=getPackage(selected);$('export-manifest').disabled=p.execution!=='local'||p.availability!=='available';text('manifest-note',p.execution==='local'?'Core v0.2 includes compatibility, permissions, budgets and offline requirements.':'A complete remote manifest needs a configured model and provider. None is fabricated here.');text('passport-title',p.name);text('passport-limits',p.limits);$('passport').replaceChildren();
@@ -80,13 +84,13 @@ async function replay(){const g=generation;replayPrior=phase;busy=true;hideError
 }
 async function compare(){const g=generation;busy=true;hideError();controls();try{const r=await getClient().request('compare',activeRoute?{kind:'route',route:activeRoute}:{kind:'benchmark',host,task:$('task').value,stoneId:selected,allowLocalFallback:false});if(g!==generation)return;result=r;renderRows(r);}catch{if(g===generation)error('Comparison failed. No new measurements are displayed.');}finally{if(g===generation){busy=false;controls();}}}
 async function digital(){const audit=selected==='digital.audit',g=generation,[target,task]=$('digital-task').value.split(':');busy=true;clearResult();hideError();text('digital-state','Running local reference tools…');controls();
- try{const r=await getClient().request(audit?'inspect':'compare',audit?{text:auditText,target:$('inspection-target').value}:{kind:'digital',host:target,task,stoneId:selected,allowLocalFallback:$('local-fallback').checked});if(g!==generation)return;result=r;renderRows(r);text('report',r.text+(r.notice?' — '+r.notice:'')+(audit?'\n\n'+JSON.stringify({source:r.source,verification:r.verification,authenticity:r.authenticity,compatibility:r.compatibility,summary:r.summary,verificationModel:r.verificationModel??null,errors:r.errors},null,2):''));text('digital-state',(r.valid===false?'Rejected / invalid metadata':'Completed / '+r.actualExecution)+(r.verificationModel?' / '+r.verificationModel.inferenceCalls+' local model calls during verification':' / no model invoked'));}
+ try{const r=await (audit&&usesDataAdapter(auditText)?dataAudit:getClient()).request(audit?'inspect':'compare',audit?{text:auditText,target:$('inspection-target').value}:{kind:'digital',host:target,task,stoneId:selected,allowLocalFallback:$('local-fallback').checked});if(g!==generation)return;result=r;renderRows(r);text('report',r.text+(r.notice?' — '+r.notice:'')+(audit?'\n\n'+JSON.stringify({source:r.source,verification:r.verification,authenticity:r.authenticity,compatibility:r.compatibility,summary:r.summary,verificationModel:r.verificationModel??null,errors:r.errors},null,2):''));text('digital-state',(r.valid===false?'Rejected / invalid metadata':'Completed / '+r.actualExecution)+(r.verificationModel?' / '+r.verificationModel.inferenceCalls+' local model calls during verification':' / no model invoked'));}
  catch{if(g===generation){error(audit?'File verification failed. Check format, versions and host; policy replay also needs the local model build. No package was installed.':'The selected Digital Stone could not complete. No cloud result is implied.');text('digital-state','Failed / no new result');client?.close();client=null;}}
  finally{if(g===generation){busy=false;controls();}}
 }
 async function loadInspectionFile(){terminate();const g=generation,file=$('inspection-file').files[0];auditText=null;clearResult();hideError();text('audit-source',file?'Reading file / no evidence loaded.':'No file selected; no evidence loaded.');text('digital-state',file?'Reading file / no result':'No file selected / no result');if(!file){controls();return;}busy=true;controls();try{const value=await readStoneFile(file);if(g!==generation)return;auditText=value;text('audit-source',file.name.slice(0,100)+' · '+file.size+' bytes · not uploaded');text('digital-state','File ready / local inspection');}catch{if(g===generation){error('Choose a valid UTF-8 JSON file no larger than 2 MiB.');text('audit-source','File rejected; no evidence loaded.');}}finally{if(g===generation){busy=false;controls();}}}
 function cancelInspectionFile(){$('inspection-file').value='';return loadInspectionFile();}
-function chooseHost(next){if(!['humanoid','drone','digital'].includes(next))return;terminate();host=next;selected=desired=packagesFor(host)[0].id;phase='ready';current=null;history=[];actions=[];template=null;clearResult();hideError();
+function chooseHost(next){if(!['humanoid','drone','digital'].includes(next))return;dataLab.setHost(next==='digital');terminate();host=next;selected=desired=packagesFor(host)[0].id;phase='ready';current=null;history=[];actions=[];template=null;clearResult();hideError();
  navigation.select(host);activeRoute=routeEditor.setHost(host);if(location.hash!=='#'+host)window.history.pushState(null,'','#'+host);$('humanoid-panel').hidden=!physical();$('digital-panel').hidden=physical();
  text('bay-note',physical()?'Reference rules. No trained weights.':'Local tools; cloud and hybrid are explicitly labelled.');cards();if(physical()){
  const tasks=host==='drone'?[['hover','Hover and hold'],['inspection','Inspection sequence']]:[['reach','Reach sequence'],['high-reach','High reach']];$('task').replaceChildren(...tasks.map(([value,label])=>new Option(label,value)));
@@ -109,5 +113,5 @@ function animate(t){const dt=Math.min(.1,(t-lastTime)/1000||0);lastTime=t;
  raf=requestAnimationFrame(animate);
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&phase==='running'){phase='paused';controls();}});
-window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);terminate();view.dispose();});
+window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);terminate();dataLab.dispose();view.dispose();});
 const initialHost=hostFromHash(location.hash);window.history.replaceState(null,'','#'+initialHost);setView('3d');chooseHost(initialHost);raf=requestAnimationFrame(animate);

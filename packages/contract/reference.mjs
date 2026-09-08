@@ -6,6 +6,7 @@ import {DRONE} from '../lab/drone.mjs';
 import {HUMANOID} from '../lab/humanoid.mjs';
 import {MACHINE} from '../../experiments/rover3d/contract.mjs';
 const specs=freeze({
+ data:{task:'digital-data-quality',machineVersion:'stone.data-table/0.1.0',engineVersion:'papaparse/5.5.3',inputs:['utf8-table','data-config'],outputs:['quality-report','normalization-proposal'],tools:['inspect-table','propose-normalization'],budget:10000},
  rover:{task:'rover-navigation',machineVersion:MACHINE.version,inputs:['position','rotation','linearVelocity','angularVelocity','wheelContacts','goal'],outputs:['throttle','steering','brake'],tools:['observe-rover','command-rover'],budget:20},
  drone:{task:'drone-waypoints',machineVersion:DRONE.version,inputs:['position','rotation','velocity','angularVelocity','goal','tick'],outputs:['rotorForces'],tools:['observe-drone','command-drone'],budget:20},
  humanoid:{task:'humanoid-reaching',machineVersion:HUMANOID.version,inputs:['goal','command','jointAngles','velocity'],outputs:['jointTargets'],tools:['observe-humanoid','command-humanoid'],budget:20},
@@ -16,7 +17,7 @@ const specs=freeze({
 export function hostFor(family){
  if(family==='arena')return LOCAL_ARENA_HOST;
  if(!Object.hasOwn(specs,family))throw new TypeError('Unknown reference host.');
- const s=specs[family];return freeze({profile:TASK_PROFILES[s.task],machineVersion:s.machineVersion,engineVersion:'rapier3d-compat/0.20.0',inputs:s.inputs,outputs:s.outputs,forms:['digital'],modes:['local'],networkOrigins:[],tools:s.tools,storage:['none','session'],states:['ephemeral'],costKinds:['none'],maxMemoryMiB:256,maxDecisionBudgetMs:s.budget});
+ const s=specs[family];return freeze({profile:TASK_PROFILES[s.task],machineVersion:s.machineVersion,engineVersion:s.engineVersion??'rapier3d-compat/0.20.0',inputs:s.inputs,outputs:s.outputs,forms:['digital'],modes:['local'],networkOrigins:[],tools:s.tools,storage:['none','session'],states:['ephemeral'],costKinds:['none'],maxMemoryMiB:256,maxDecisionBudgetMs:s.budget});
 }
 export function hostForProfile(profile){
  if(profile===LOCAL_ARENA_HOST.profile)return hostFor('arena');

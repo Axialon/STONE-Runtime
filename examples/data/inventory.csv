@@ -1,0 +1,6 @@
+id,name,email,stock
+001, Ada North ,ada@example.invalid,12
+002,"River, Lee",river@example.invalid,
+002,"River, Lee",river@example.invalid,
+003,Example,=INERT-TEXT,unknown
+,,,

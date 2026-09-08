@@ -1,7 +1,7 @@
 /** Core manifest v0.1/v0.2: metadata validation, never execution or authorisation. */
 export const MAX_MANIFEST_BYTES = 65536;
 export const PROFILE = 'stone.arena.control/0.1';
-export const TASK_PROFILES=Object.freeze({'arena-navigation':PROFILE,'rover-navigation':'stone.rover.control/0.1','drone-waypoints':'stone.drone.rotors/0.1','humanoid-reaching':'stone.humanoid.reach/0.1','digital-benchmark':'stone.digital.benchmark/0.1','digital-evidence-audit':'stone.digital.evidence/0.1'});
+export const TASK_PROFILES=Object.freeze({'arena-navigation':PROFILE,'rover-navigation':'stone.rover.control/0.1','drone-waypoints':'stone.drone.rotors/0.1','humanoid-reaching':'stone.humanoid.reach/0.1','digital-benchmark':'stone.digital.benchmark/0.1','digital-evidence-audit':'stone.digital.evidence/0.1','digital-data-quality':'stone.digital.data-quality/0.1'});
 const release = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 const identityVersion = /^(?:[a-zA-Z][a-zA-Z0-9._-]*\/)*(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$/;
 const modelReference = /^[a-zA-Z0-9][a-zA-Z0-9._/-]*@(?:(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)|sha256:[a-f0-9]{64})$/;
