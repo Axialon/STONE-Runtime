@@ -13,3 +13,6 @@ This is a curated public verification snapshot, not the internal project archive
 
 ## Session efficiency and component ownership
 The owner prefers substantial verified batches per conversation turn. Complete dependent increments in one active session where practical, with local test/review checkpoints; do not ask for routine approvals or imply work continues unattended. Keep project direction and acceptance in the conversation. Use additional coding-model assistance only when the owner explicitly authorises it; verify its proposals and disclose the review method. This published rover component is maintained here with immutable integration references in private coordination; never automatically mirror private documents or history. Preserve the separate planar baseline.
+
+## Native implementation and acceptance
+Use docs/DEVELOPMENT.md. The supervising coordinator supplies one approved task; native Codex may own scoped source edits and narrow tests in its dedicated checkout. Keep .git protection and normal sandboxing; the supervisor owns commits, full product verification and integration. Agent summaries or file-only test reports are not acceptance. Never use a global resume-last selector across projects. Keep the coordinator execution board authoritative, with issues for discussion, and reconcile private pin/current evidence at the same milestone.

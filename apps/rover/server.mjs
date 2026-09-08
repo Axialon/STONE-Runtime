@@ -13,8 +13,10 @@ for(const f of ['contract.mjs','world.mjs','stones.mjs','session.mjs'])assets.se
 for(const [route,path] of [['rapier.mjs','../../experiments/rover3d/node_modules/@dimforge/rapier3d-compat/dist/rapier.mjs'],['three.module.js','node_modules/three/build/three.module.js'],['three.core.js','node_modules/three/build/three.core.js'],['OrbitControls.js','node_modules/three/examples/jsm/controls/OrbitControls.js']])assets.set('/vendor/'+route,new URL(path,here));
 for(const f of ['contract.mjs','world.mjs','stones.mjs','session.mjs'])assets.set('/experiments/rover3d/'+f,new URL('experiments/rover3d/'+f,root));
 for(const f of ['common.mjs','registry.mjs','humanoid.mjs','drone.mjs','control-session.mjs','humanoid-session.mjs','drone-session.mjs'])assets.set('/packages/lab/'+f,new URL('packages/lab/'+f,root));
+assets.set('/shared/stone-file-picker.mjs',new URL('apps/shared/stone-file-picker.mjs',root));
+for(const f of ['stone-package.mjs','manifest.mjs','compatibility.mjs','reference.mjs'])assets.set('/packages/contract/'+f,new URL('packages/contract/'+f,root));
 assets.set('/model-worker.mjs',new URL('model-worker.mjs',here));
-for(const f of ['identity.mjs','recording.mjs','client-state.mjs','manifest.mjs'])assets.set('/packages/learned-rover/'+f,new URL('packages/learned-rover/'+f,root));
+for(const f of ['identity.mjs','recording.mjs','client-state.mjs','manifest.mjs','package-data.mjs'])assets.set('/packages/learned-rover/'+f,new URL('packages/learned-rover/'+f,root));
 assets.set('/vendor/learned.mjs',new URL('tools/model-bundle/dist/learned.mjs',root));
 assets.set('/vendor/learned-notices.txt',new URL('tools/model-bundle/dist/THIRD_PARTY_NOTICES.txt',root));
 assets.set('/models/flow-v0.1.json',new URL('experiments/learned-flow/model/model.json',root));

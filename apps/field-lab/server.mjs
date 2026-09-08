@@ -12,7 +12,7 @@ for(const f of ['navigation.mjs','route-editor.mjs','workbench.css'])assets.set(
 for(const f of ['contract.mjs','rover-session.mjs','runtime.mjs'])assets.set('/packages/routes/'+f,new URL('packages/routes/'+f,root));
 for(const f of ['index.html','style.css','boot.mjs','app.mjs','scene.mjs','worker.mjs'])assets.set('/'+f,new URL(f,here));
 assets.set('/client.mjs',new URL('apps/rover/client.mjs',root));
-for(const f of ['manifest.mjs','compatibility.mjs','reference.mjs'])assets.set('/packages/contract/'+f,new URL('packages/contract/'+f,root));
+for(const f of ['manifest.mjs','compatibility.mjs','reference.mjs','stone-package.mjs'])assets.set('/packages/contract/'+f,new URL('packages/contract/'+f,root));
 for(const f of ['common.mjs','registry.mjs','humanoid.mjs','humanoid-session.mjs','drone.mjs','drone-session.mjs','control-session.mjs','benchmark.mjs','inspection.mjs','file-input.mjs'])assets.set('/packages/lab/'+f,new URL('packages/lab/'+f,root));
 for(const f of ['contract.mjs','world.mjs','stones.mjs','session.mjs'])assets.set('/experiments/rover3d/'+f,new URL('experiments/rover3d/'+f,root));
 for(const [route,path] of [
@@ -21,6 +21,7 @@ for(const [route,path] of [
  ['three.core.js','apps/rover/node_modules/three/build/three.core.js'],
  ['OrbitControls.js','apps/rover/node_modules/three/examples/jsm/controls/OrbitControls.js']
 ])assets.set('/vendor/'+route,new URL(path,root));
+for(const f of ['identity.mjs','manifest.mjs','package-data.mjs'])assets.set('/packages/learned-rover/'+f,new URL('packages/learned-rover/'+f,root));
 assets.set('/vendor/learned.mjs',new URL('tools/model-bundle/dist/learned.mjs',root));
 assets.set('/models/flow-v0.1.json',new URL('experiments/learned-flow/model/model.json',root));
 export async function startFieldServer(port=4174){

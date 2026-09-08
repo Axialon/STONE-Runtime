@@ -1,4 +1,6 @@
 import {createNavigation} from '/shared/navigation.mjs';
+import {createStoneFilePicker} from '/shared/stone-file-picker.mjs';
+import {inspectModelPackage} from '/packages/learned-rover/package-data.mjs';
 import {createRouteEditor} from '/shared/route-editor.mjs';
 import {createView} from './scene.mjs';
 import {createClient} from './client.mjs';
@@ -11,15 +13,17 @@ const $=id=>document.getElementById(id),text=(id,value)=>{if($(id).textContent!=
 const view=createView($('viewport'),$('plan'));
 text('renderer-state',view.supported?'Three.js / WebGL 2':'Plan / WebGL unavailable');
 let client=null,generation=0,busy=false,phase='loading',selected='rover.flow',desired=selected,course='ramp-lane',current=null,history=[],actions=[],measurements=null,comparison=[],replayIndex=0,replayPrior='paused',lastTime=0,accumulator=0,raf;
-let activeRoute=null,modelMode=false,comparisonEnvelope=null;
+let activeRoute=null,modelMode=false,comparisonEnvelope=null,activePackageText=null,activePackageReceipt=null;
+const packagePayload=()=>modelMode&&activePackageText!==null?{packageText:activePackageText}:{};
 const executionClient=()=>modelMode?createClient(()=>new Worker(new URL('./model-worker.mjs',import.meta.url),{type:'module'})):createClient();
 const navigation=createNavigation($('host-navigation'),{app:'rover',current:'rover'});
 document.querySelector('.brand').href=navigation.fieldUrl;
 const routeEditor=createRouteEditor($('route-editor'),{onApply:async route=>{activeRoute=route;if(route)$('course').value='flat-lane';await restart();}});routeEditor.setHost('rover');
+const stoneFiles=createStoneFilePicker($('stone-file-picker'),{activate:async file=>{activePackageText=file.text;activePackageReceipt=file.receipt;modelMode=true;desired=MODEL_IDENTITY.id;if(await restart()!==true)throw new Error('Model source startup failed.');},builtin:async()=>{activePackageText=null;activePackageReceipt=null;modelMode=true;desired=MODEL_IDENTITY.id;if(await restart()!==true)throw new Error('Model source startup failed.');},exportFile:exportStoneFile});
 const cards=[...document.querySelectorAll('[data-stone]')];
 const labels={loading:'Initialising engine',ready:'Ready / '+selected,paused:'Paused / state retained',running:'Live / '+selected,stopped:'Stopped / worker terminated',complete:'Goal reached / stopped',error:'Execution stopped',replay:'Verified engine replay'};
 function controls(){
- document.body.dataset.phase=phase;document.body.dataset.busy=String(busy);document.body.dataset.model=String(modelMode);
+ document.body.dataset.phase=phase;document.body.dataset.busy=String(busy);document.body.dataset.model=String(modelMode);stoneFiles.setContext({busy,phase,modelMode,hasState:!!current,routeActive:!!activeRoute,source:activePackageReceipt});
  $('start').disabled=busy||!['ready','paused'].includes(phase);$('pause').disabled=phase!=='running';$('step').disabled=busy||!['ready','paused'].includes(phase);$('stop').disabled=['stopped','loading','error'].includes(phase)&&!busy;
  $('reset').disabled=false;$('course').disabled=busy||!!activeRoute;$('compare').disabled=busy||['loading','running','replay'].includes(phase);$('replay').disabled=busy||history.length<2||['running','replay','loading'].includes(phase);$('scrub').disabled=history.length<2||busy||['running','loading'].includes(phase);
  $('export').disabled=actions.length===0;$('export-results').disabled=!comparison.length;$('live').disabled=!current||busy||phase==='running';
@@ -39,7 +43,7 @@ function fail(message){phase='error';busy=false;client?.close();client=null;$('e
 function recording(){if(modelMode){const e=current.execution;return makePolicyRecording(course,history[0].stoneId,current.stoneId,current.frame.status,actions.slice(),history.slice(1).map(s=>s.appliedStoneId),{modelCalls:e.modelCalls,ruleDecisions:e.ruleDecisions,guardDecisions:e.guardDecisions});}if(activeRoute)return {format:'stone.rover.route-session/0.1',profile:PROFILE,machineVersion:MACHINE.version,engineVersion:ENGINE.version,taskVersion:'stone.route/0.1',task:'custom-route',route:activeRoute,initialStoneId:history[0].stoneId,finalStoneId:current.stoneId,finalStatus:current.frame.status,actions:actions.slice(),assignments:history.slice(1).map(x=>x.appliedStoneId)};return {format:'stone.rover.session/0.1',tape:makeReplay(course,actions.slice()),assignments:history.slice(1).map(x=>x.appliedStoneId),metrics:measurements};}
 async function restart(){
  const g=++generation;client?.close();client=executionClient();phase='loading';busy=true;history=[];actions=[];comparison=[];comparisonEnvelope=null;measurements=null;current=null;text('inference-count',0);text('decision-source','NONE');text('tick',0);text('time','0.00');text('speed','0.00');text('height','—');text('contacts','—');$('simulation-unavailable').hidden=false;view.update(null,[]);selected=desired;course=$('course').value;$('error').hidden=true;$('results').replaceChildren();const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=7;td.textContent='Run a comparison to see measured results.';tr.append(td);$('results').append(tr);view.compare([]);view.setCourse(course,activeRoute);controls();
- try{const s=await client.request('start',{courseId:course,stoneId:selected,...(activeRoute?{route:activeRoute}:{})});if(g!==generation)return;if(modelMode)validateModelSample(s);current=s;history=[s];phase='ready';busy=false;document.body.dataset.ready='true';show(s);controls();}catch{if(g===generation)fail(modelMode?'Saved model startup failed. Verify the pinned model and local build (npm run build:models), then Reset or disable learned mode. No rule fallback ran.':'Engine startup failed. Verify the pinned Rapier installation, then Reset.');}
+ try{const s=await client.request('start',{courseId:course,stoneId:selected,...(activeRoute?{route:activeRoute}:{}),...packagePayload()});if(g!==generation)return;if(modelMode)validateModelSample(s);current=s;history=[s];phase='ready';busy=false;document.body.dataset.ready='true';show(s);controls();return true;}catch{if(g===generation)fail(modelMode?'Saved model startup failed. Verify the pinned model and local build (npm run build:models), then Reset or disable learned mode. No rule fallback ran.':'Engine startup failed. Verify the pinned Rapier installation, then Reset.');}
 }
 async function advance(n){const g=generation;busy=true;controls();try{const r=await client.request('advance',{steps:n});if(g!==generation)return;if(modelMode)validateModelBatch(r,current,n);current=r.snapshot;history.push(...r.frames);actions.push(...r.actions);measurements=r.metrics;selected=current.stoneId;if(current.frame.status!=='running')phase=current.frame.status==='succeeded'?'complete':'error';show(current);if(phase==='error'){$('error').hidden=false;$('error').textContent='Simulation ended: '+current.frame.status;}}catch{if(g===generation)fail('Decision execution failed or exceeded its deadline. The last acknowledged recording is retained.');}finally{if(g===generation){busy=false;controls();}}}
 async function install(id){getStone(id);if(id===MODEL_IDENTITY.id&&!modelMode)return;desired=id;if(busy||phase==='loading'){controls();return;}if(!client||['stopped','error'].includes(phase)){controls();text('run-state','Stone queued / Reset to install');return;}if(phase==='replay')return;
@@ -47,7 +51,7 @@ async function install(id){getStone(id);if(id===MODEL_IDENTITY.id&&!modelMode)re
 }
 function stop(){generation++;client?.close();client=null;busy=false;phase='stopped';if((activeRoute||modelMode)&&current?.frame.status==='running'){current={...current,frame:{...current.frame,status:'stopped'}};history[history.length-1]={...history.at(-1),frame:current.frame};show(current);}controls();}
 async function replay(){const g=generation;replayPrior=phase;busy=true;controls();try{
- if(!client)client=executionClient();const r=await client.request('replay',{recording:JSON.stringify(recording())});if(g!==generation)return;
+ if(!client)client=executionClient();const r=await client.request('replay',{recording:JSON.stringify(recording()),...packagePayload()});if(g!==generation)return;
  if(r.frames.length!==history.length||r.frames.some((f,i)=>JSON.stringify(f.frame)!==JSON.stringify(history[i].frame)||JSON.stringify(f.visual)!==JSON.stringify(history[i].visual)))throw new Error('Replay mismatch');
  if(modelMode&&(r.policyVerified!==true||JSON.stringify(r.state)!==JSON.stringify(current)||r.frames.some((f,i)=>JSON.stringify(f.execution)!==JSON.stringify(history[i].execution))))throw new Error('Model replay evidence mismatch');
  phase='replay';replayIndex=0;show(history[0],0);text('record-state','Verified replay / '+actions.length+' decisions');
@@ -55,10 +59,11 @@ async function replay(){const g=generation;replayPrior=phase;busy=true;controls(
 }
 async function compare(){const g=generation;busy=true;controls();text('run-state','Comparing / identical machine');try{
  if(!client)client=executionClient();
- const response=await client.request('compare',{courseId:course,...(activeRoute?{route:activeRoute}:{})});if(g!==generation)return;if(activeRoute&&(response.scope!=='custom-route'||JSON.stringify(response.route)!==JSON.stringify(activeRoute)))throw new Error('Route comparison identity mismatch');if(modelMode)validateModelComparison(response,course);const measured=activeRoute||modelMode?response.results:response;comparisonEnvelope=modelMode?response:null;comparison=measured;$('results').replaceChildren();
+ const response=await client.request('compare',{courseId:course,...(activeRoute?{route:activeRoute}:{}),...packagePayload()});if(g!==generation)return;if(activeRoute&&(response.scope!=='custom-route'||JSON.stringify(response.route)!==JSON.stringify(activeRoute)))throw new Error('Route comparison identity mismatch');if(modelMode)validateModelComparison(response,course);const measured=activeRoute||modelMode?response.results:response;comparisonEnvelope=modelMode?response:null;comparison=measured;$('results').replaceChildren();
  for(const r of comparison){const tr=document.createElement('tr');const fields=[r.name,r.status==='succeeded'?'Goal reached':r.status,r.seconds.toFixed(2),r.peakSpeed.toFixed(2),r.throttleImpulseNs.toFixed(1),String(r.chassisContacts),String(r.modelCalls??0)];fields.forEach((value,i)=>{const td=document.createElement('td');td.textContent=value;if(i===0)td.dataset.style=r.id.split('.')[1];tr.append(td);});$('results').append(tr);}view.compare(comparison);
  }catch{if(g===generation){comparison=[];comparisonEnvelope=null;$('results').replaceChildren();view.compare([]);fail('Comparison failed. Reset to restart control; no new comparison is accepted. The acknowledged recording is retained.');}}finally{if(g===generation){busy=false;controls();}}
 }
+async function exportStoneFile(){const g=generation;busy=true;controls();try{if(!client)client=executionClient();const p=await client.request('inspect',{kind:'export-package',...packagePayload()});if(g!==generation)return;const proof=await inspectModelPackage(JSON.stringify(p),'rover');if(g!==generation)return;if(!proof.compatibility.compatible)throw new Error('Unadmitted exported data.');download('FLOW-Learned.stone.json',p);}catch{if(g===generation)fail('Stone export failed. The acknowledged recording is retained; no alternative source was used.');}finally{if(g===generation){busy=false;controls();}}}
 function download(name,data){try{const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch{$('error').hidden=false;$('error').textContent='Download could not be created. Your recording is retained.';}}
 function animate(now){raf=requestAnimationFrame(animate);const delta=Math.min((now-lastTime)/1000,.1);lastTime=now;
  if(phase==='replay'){accumulator+=delta;if(accumulator>=MACHINE.dt){const n=Math.max(1,Math.floor(accumulator/MACHINE.dt));accumulator=0;replayIndex=Math.min(history.length-1,replayIndex+n);show(history[replayIndex],replayIndex);if(replayIndex===history.length-1){phase=replayPrior;controls();text('run-state','Verified replay complete');}}return;}
@@ -68,7 +73,7 @@ function animate(now){raf=requestAnimationFrame(animate);const delta=Math.min((n
 $('start').onclick=()=>{if(!busy&&['ready','paused'].includes(phase)){phase='running';accumulator=0;show(current);controls();}};
 $('pause').onclick=()=>{if(phase==='running'){phase='paused';controls();}};
 $('step').onclick=()=>{if(!busy&&['ready','paused'].includes(phase)){phase='paused';advance(1);}};
-$('enable-model').onchange=()=>{if(activeRoute){$('enable-model').checked=false;return;}modelMode=$('enable-model').checked;desired=modelMode?MODEL_IDENTITY.id:'rover.flow';void restart();};
+$('enable-model').onchange=()=>{if(activeRoute){$('enable-model').checked=false;return;}activePackageText=null;activePackageReceipt=null;modelMode=$('enable-model').checked;desired=modelMode?MODEL_IDENTITY.id:'rover.flow';void restart();};
 $('stop').onclick=stop;$('reset').onclick=restart;$('course').onchange=restart;$('replay').onclick=replay;$('compare').onclick=compare;
 $('live').onclick=()=>{if(phase==='replay')phase=replayPrior;show(current);controls();};
 $('scrub').oninput=()=>{if(phase==='replay')phase=replayPrior;const i=Number($('scrub').value);show(history[i],i);controls();};
@@ -78,5 +83,5 @@ function mode(value){const result=view.setMode(value);$('view3d').setAttribute('
 $('view3d').onclick=()=>mode('3d');$('viewplan').onclick=()=>mode('plan');$('home').onclick=()=>view.home();$('focus').onclick=()=>{mode('3d');view.focus();};$('viewport').addEventListener('rendererchange',()=>mode('plan'));
 document.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='Space'&&!['BUTTON','A'].includes(e.target.tagName)){e.preventDefault();if(phase==='running')$('pause').click();else $('start').click();}if(['Digit1','Digit2','Digit3',...(modelMode?['Digit4']:[])].includes(e.code)&&!e.ctrlKey&&!e.metaKey){e.preventDefault();cards[Number(e.code.at(-1))-1].click();}if(e.code==='Escape'){e.preventDefault();stop();}if(e.code==='Home'&&e.target.closest('#viewport')){e.preventDefault();view.home();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&phase==='running'){phase='paused';controls();}});
-window.addEventListener('pagehide',()=>{generation++;client?.close();cancelAnimationFrame(raf);view.dispose();});
+window.addEventListener('pagehide',()=>{generation++;client?.close();cancelAnimationFrame(raf);view.dispose();stoneFiles.dispose();});
 mode(view.supported?'3d':'plan');await restart();raf=requestAnimationFrame(animate);
