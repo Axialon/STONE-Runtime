@@ -1,0 +1,9 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {loadRapier} from '../../rover3d/engine.mjs';
+import {loadPolicy,loadPackage,MODEL_SHA256} from '../browser-runtime.mjs';import {createModelPackage} from '../../../packages/learned-rover/package-data.mjs';import {createModelSession,replayModelRecording} from '../../../packages/learned-rover/session.mjs';
+const text=readFileSync(new URL('../model/model.json',import.meta.url),'utf8'),R=await loadRapier();
+test('a verified handle can export immutable original parameter bytes but not after disposal',async()=>{const p=await loadPolicy(text);assert.equal(p.exportArtifact(),text);p.dispose();assert.throws(()=>p.exportArtifact());});
+test('supplied package parameters drive the same actual engine and replay without fetching separate weights',async()=>{
+ const raw=JSON.stringify(await createModelPackage(text));const received=await loadPackage(raw);assert.equal(received.receipt.source.bytes,Buffer.byteLength(raw));assert.equal(received.policy.identity.modelSha256,MODEL_SHA256);
+ const s=createModelSession(R,'flat-lane','rover.flow-learned',received.policy);try{while(s.read().frame.status==='running')s.advance(120);assert.equal(s.read().frame.status,'succeeded');assert.ok(s.metrics().modelCalls>400);assert.equal(replayModelRecording(R,JSON.stringify(s.export()),received.policy).policyVerified,true);}finally{s.dispose();received.policy.dispose();}
+});
+test('unsupported or aborted packages never become a model handle',async()=>{const p=structuredClone(await createModelPackage(text));p.runtime.adapter='stone.unknown/0.1';await assert.rejects(loadPackage(JSON.stringify(p)));const c=new AbortController();c.abort();await assert.rejects(loadPackage(JSON.stringify(await createModelPackage(text)),{signal:c.signal}));});

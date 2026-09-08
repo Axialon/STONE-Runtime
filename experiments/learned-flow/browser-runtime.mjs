@@ -1,5 +1,6 @@
 import {DecisionTreeRegression} from 'ml-cart';
 import {decodeArtifact,predictAction,guardKind} from './policy.mjs';
+import {readModelPackage} from '../../packages/learned-rover/package-data.mjs';
 import {MODEL_IDENTITY,MODEL_SHA256} from '../../packages/learned-rover/identity.mjs';
 export {MODEL_SHA256};
 const MAX_BYTES=65536,loadedPolicies=new WeakSet();
@@ -16,7 +17,7 @@ export async function loadPolicy(text,{signal}={}){
  const counted={predict(rows){modelCalls++;return model.predict(rows);}};
  const handle=Object.freeze({identity:MODEL_IDENTITY,
   decide(observation){if(disposed)throw new Error('Policy is disposed.');const before=modelCalls,guard=guardKind(observation),action=predictAction(counted,observation);return Object.freeze({action,guard,modelCalls:modelCalls-before});},
-  stats(){return Object.freeze({modelCalls});},dispose(){disposed=true;loadedPolicies.delete(handle);}});
+  stats(){return Object.freeze({modelCalls});},exportArtifact(){if(disposed)throw new Error('Policy is disposed.');return text;},dispose(){disposed=true;loadedPolicies.delete(handle);}});
  loadedPolicies.add(handle);return handle;
 }
 export async function fetchPolicy({fetcher=globalThis.fetch,signal}={}){
@@ -30,4 +31,11 @@ export async function fetchPolicy({fetcher=globalThis.fetch,signal}={}){
  finally{if(!done)await reader.cancel();reader.releaseLock();}
  const bytes=new Uint8Array(total);let offset=0;for(const p of parts){bytes.set(p,offset);offset+=p.byteLength;}
  active(signal);return loadPolicy(new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes),{signal});
+}
+
+export async function loadPackage(text,{signal}={}){
+ active(signal);const receipt=await readModelPackage(text,'rover');active(signal);
+ if(!receipt.compatibility.compatible)throw new Error('Stone file is not admitted by this fixed runtime.');
+ const policy=await loadPolicy(receipt.modelText,{signal});
+ return Object.freeze({policy,receipt});
 }

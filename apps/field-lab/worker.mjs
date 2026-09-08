@@ -4,6 +4,7 @@ import {readRoute} from '/packages/routes/contract.mjs';
 import {createHumanoidSession,replayHumanoidSession} from '/packages/lab/humanoid-session.mjs';
 import {createDroneSession,replayDroneSession} from '/packages/lab/drone-session.mjs';
 import {benchmark,digitalBenchmark} from '/packages/lab/benchmark.mjs';
+import {inspectModelPackage} from '/packages/learned-rover/package-data.mjs';
 import {inspectStoneData} from '/packages/lab/inspection.mjs';
 import {fields} from '/packages/lab/common.mjs';
 const ready=R.init();let session=null,busy=false;
@@ -15,7 +16,9 @@ self.onmessage=async({data:m})=>{
   const p=m.payload;let result;
   if(m.type==='inspect'&&fields(p,['text','target'])){
    if(typeof p.text!=='string'||p.text.length>2097152)throw new Error('Invalid evidence size.');
-   if(JSON.parse(p.text)?.format==='stone.rover.policy-session/0.1'){
+   const format=JSON.parse(p.text)?.format;
+   if(format==='stone.package/0.1')result=await inspectModelPackage(p.text,p.target);
+   else if(format==='stone.rover.policy-session/0.1'){
     if(!['auto','rover'].includes(p.target))throw new Error('Wrong policy host.');
     const api=await import('/vendor/learned.mjs'),verifiedModel=await api.fetchPolicy();
     try{result=await api.inspectPolicyRecording(R,p.text,p.target,verifiedModel);}finally{verifiedModel.dispose();}
