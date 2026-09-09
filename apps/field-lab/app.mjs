@@ -1,3 +1,4 @@
+import {mountSignaturePanel} from '/shared/signature-panel.mjs';
 import {mountDataLab} from '/data-lab/app.mjs';
 import {WorkerClient as DataWorkerClient} from '/data-lab/session.mjs';
 import {usesDataAdapter} from '/packages/data-quality/dispatch.mjs';
@@ -9,6 +10,7 @@ import {createView} from './scene.mjs';
 import {createClient} from './client.mjs';
 import {getPackage,packagesFor} from '/packages/lab/registry.mjs';
 const $=id=>document.getElementById(id),text=(id,value)=>{$(id).textContent=String(value);};
+const signaturePanel=mountSignaturePanel($('signature-panel'));
 const dataLab=mountDataLab($('data-lab')),dataAudit=new DataWorkerClient();
 const view=createView($('viewport'),$('plan'));
 let host='humanoid',selected='humanoid.fluid',desired=selected,phase='loading',busy=false,generation=0,client=null;
@@ -90,7 +92,7 @@ async function digital(){const audit=selected==='digital.audit',g=generation,[ta
 }
 async function loadInspectionFile(){terminate();const g=generation,file=$('inspection-file').files[0];auditText=null;clearResult();hideError();text('audit-source',file?'Reading file / no evidence loaded.':'No file selected; no evidence loaded.');text('digital-state',file?'Reading file / no result':'No file selected / no result');if(!file){controls();return;}busy=true;controls();try{const value=await readStoneFile(file);if(g!==generation)return;auditText=value;text('audit-source',file.name.slice(0,100)+' · '+file.size+' bytes · not uploaded');text('digital-state','File ready / local inspection');}catch{if(g===generation){error('Choose a valid UTF-8 JSON file no larger than 2 MiB.');text('audit-source','File rejected; no evidence loaded.');}}finally{if(g===generation){busy=false;controls();}}}
 function cancelInspectionFile(){$('inspection-file').value='';return loadInspectionFile();}
-function chooseHost(next){if(!['humanoid','drone','digital'].includes(next))return;dataLab.setHost(next==='digital');terminate();host=next;selected=desired=packagesFor(host)[0].id;phase='ready';current=null;history=[];actions=[];template=null;clearResult();hideError();
+function chooseHost(next){if(!['humanoid','drone','digital'].includes(next))return;dataLab.setHost(next==='digital');signaturePanel.setHost(next==='digital');terminate();host=next;selected=desired=packagesFor(host)[0].id;phase='ready';current=null;history=[];actions=[];template=null;clearResult();hideError();
  navigation.select(host);activeRoute=routeEditor.setHost(host);if(location.hash!=='#'+host)window.history.pushState(null,'','#'+host);$('humanoid-panel').hidden=!physical();$('digital-panel').hidden=physical();
  text('bay-note',physical()?'Reference rules. No trained weights.':'Local tools; cloud and hybrid are explicitly labelled.');cards();if(physical()){
  const tasks=host==='drone'?[['hover','Hover and hold'],['inspection','Inspection sequence']]:[['reach','Reach sequence'],['high-reach','High reach']];$('task').replaceChildren(...tasks.map(([value,label])=>new Option(label,value)));
@@ -113,5 +115,5 @@ function animate(t){const dt=Math.min(.1,(t-lastTime)/1000||0);lastTime=t;
  raf=requestAnimationFrame(animate);
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&phase==='running'){phase='paused';controls();}});
-window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);terminate();dataLab.dispose();view.dispose();});
+window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);terminate();dataLab.dispose();signaturePanel.dispose();view.dispose();});
 const initialHost=hostFromHash(location.hash);window.history.replaceState(null,'','#'+initialHost);setView('3d');chooseHost(initialHost);raf=requestAnimationFrame(animate);
