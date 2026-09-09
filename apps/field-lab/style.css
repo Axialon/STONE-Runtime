@@ -32,3 +32,5 @@ header,main{max-width:1440px;margin:auto}header{display:flex;justify-content:spa
 @media(max-width:720px){body[data-host="digital"] .stone[data-identity="5"]{grid-column:1/-1;min-height:100px}.audit-panel{padding:14px}.stage-top>span{max-width:45%}}
 
 #audit-source{overflow-wrap:anywhere}
+
+#signature-panel{margin:1rem 0;padding:1rem;border:1px solid #8886;min-width:0;overflow-wrap:anywhere}#signature-panel summary{cursor:pointer;font-weight:600}#signature-panel label{display:block;margin-top:1rem}#signature-panel input{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;margin:.4rem 0}#signature-panel p{font-size:.85rem;line-height:1.5}#signature-panel pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;max-width:100%;font-size:.75rem}#signature-panel .run-controls{flex-wrap:wrap}#signature-panel button{white-space:normal}

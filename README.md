@@ -73,3 +73,7 @@ The reviewed FLOW model can now be saved, locally inspected and explicitly activ
 Open Digital in Field Lab for local CSV/JSON inspection. LENS reports data-quality findings; TIDY proposes reversible edge trimming/empty-row omission while preserving the original. Create, inspect, export and explicitly activate a third declarative Data Stone through the same preinstalled adapter—no new card-specific runtime code. Data, policy receipts and normalized JSON exports stay local. See docs/DATA_STONES.md and evidence/DATA_STONES_V0_1.md.
 
 This adds one separately locked Papa Parse5.5.3 dependency (MIT). Install `packages/data-quality` with scripts disabled, run `npm run build:data`, then the existing `npm start`. `npm run verify:full` includes the new data checks. Robotics/model routes and the original four dependency locks remain unchanged.
+
+## Optional detached package signatures
+
+Digital now includes a separate collapsed package-signature panel. It verifies exact package bytes using standard Ed25519 and can compare the signer public-key fingerprint with an independently obtained expected value. A mathematically valid signature does not identify a person, enroll a trusted publisher or grant runtime permissions. The browser accepts only public package/signature data; a bounded optional CLI signs with an operator-supplied Ed25519 PKCS8 key on stdin, never by discovering or storing credentials. No real publisher keys were enrolled. See docs/PACKAGE_SIGNATURES.md and evidence/PACKAGE_SIGNATURES_V0_1.md.
